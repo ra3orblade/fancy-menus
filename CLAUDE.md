@@ -187,14 +187,20 @@ Both smoke scripts auto-detect the dev URL when `URL` env is unset (default
 
 ## Open work
 
-- More row kinds wired to the runtime: `chip`, `selectNav`, `filterRule`,
-	`checkbox`
-- Sub-menu spawning lifecycle (the `subMenus` registry exists but the
-	runtime currently treats children as plain `useMenu().open()` calls)
-- Richer panels: `codeEditor`, `katexPreview`, `qrCode`, `slider`,
-	`markdownToolbar`, `tabBar` (as a panel, not just chrome)
-- IconRegistry resolution in `IconView` (string-name icons currently
-	render the literal string)
+- npm publish prep for `packages/core`: lock the version (≥0.1.0), gate
+	`files`/`publishConfig` in `package.json`, ensure the export map (`./`,
+	`./types`, `./runtime`, `./runtime.css`) resolves in a consumer install.
+- Heavier panel renderers (`codeEditor`, `katexPreview`, `qrCode`) currently
+	ship lightweight fallbacks — consumers who need monaco / KaTeX / a
+	scannable QR can swap to a `kind: Custom` panel.
+
+The full row + panel inventory is wired into the runtime. The `subMenus`
+registry on `MenuConfig` resolves through `ctx.open` (an unmatched id falls
+through to a global menu lookup for back-compat).
+
+Icons use `@phosphor-icons/react`. The schema's `IconParam` accepts a
+component (or `{ icon, size, color, weight }` spec) only — never a string
+name. There is no IconRegistry; styling intent travels with the icon.
 
 Storybook is **not** on the roadmap — the playground sidebar already
 provides per-example previews + live data, and adding Storybook on top

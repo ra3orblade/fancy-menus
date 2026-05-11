@@ -395,16 +395,16 @@ bun scripts/interact.mjs
 
 ## Open work
 
-- More row variants in the runtime: `chip`, `selectNav`, `filterRule`, `checkbox`
-- Sub-menu spawning lifecycle (the `subMenus` registry exists; runtime
-  currently treats children as plain `useMenu().open()` calls)
-- Horizontal list orientation + buttons row primitive
-- Richer panels: `codeEditor`, `katexPreview`, `qrCode`, `slider`,
-  `markdownToolbar`, `tabBar` (as a panel, not just chrome)
-- IconRegistry resolution in `IconView` (string-name icons currently render
-  the literal string)
-- More complex example menus (replace-paged settings wizard, cascading
-  context menu with hover-spawned sub-menus, share-flow)
+- npm publish prep for `@fancy-menus/core` (version bump, `files`,
+  `publishConfig`, export map verification).
+- Heavier panel renderers — `codeEditor`, `katexPreview`, `qrCode` — ship
+  lightweight fallbacks; consumers who need monaco / KaTeX / a scannable
+  QR can swap to a `kind: Custom` panel.
+
+All row variants (`chip`, `selectNav`, `filterRule`, `checkbox`) and panel
+kinds are wired into the runtime. Icons use `@phosphor-icons/react`; the
+schema's `IconParam` is a component (or `{ icon, size, color, weight }`
+spec) — string names are not accepted.
 
 See `CLAUDE.md` for repo conventions.
 
