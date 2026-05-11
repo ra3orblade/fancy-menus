@@ -86,21 +86,27 @@ export function useKeyboard(
 			const isLeft = k === 'arrowleft';
 			const isRight = k === 'arrowright';
 
+			// When nothing's active yet (e.g. a horizontal toolbar that opens
+			// with no pre-selection), the first arrow keystroke should
+			// activate the first or last row — not jump by one from -1
+			// which would wrap to count - 2.
+			const bootstrap = (dir: 1 | -1) => (dir === 1 ? 0 : Math.max(0, count - 1));
+
 			if (isUp) {
 				e.preventDefault();
 				const step = nav === KeyboardNavigation.Grid2D ? (columns ?? 1) : 1;
-				setIndex(cycle(index - step));
+				setIndex(index < 0 ? bootstrap(-1) : cycle(index - step));
 				return;
 			}
 			if (isDown) {
 				e.preventDefault();
 				const step = nav === KeyboardNavigation.Grid2D ? (columns ?? 1) : 1;
-				setIndex(cycle(index + step));
+				setIndex(index < 0 ? bootstrap(1) : cycle(index + step));
 				return;
 			}
 			if (nav === KeyboardNavigation.Grid2D && (isLeft || isRight)) {
 				e.preventDefault();
-				setIndex(cycle(index + (isLeft ? -1 : 1)));
+				setIndex(index < 0 ? bootstrap(isLeft ? -1 : 1) : cycle(index + (isLeft ? -1 : 1)));
 				return;
 			}
 			// 1D navigation: ArrowRight opens the active row's sub-menu (if any),

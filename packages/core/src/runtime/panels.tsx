@@ -70,9 +70,14 @@ function LabelPanel({ spec }: any) {
 
 function SearchInputPanel({ spec, ctx }: any) {
 	const [value, setValue] = useState('');
-	const debounce = useRef<number>();
-	// Clear any pending debounced onChange when the panel unmounts so we
-	// don't fire spec.onChange against a stale ctx.
+	const debounce = useRef<number | undefined>(undefined);
+	// Hold the latest ctx via a ref so the debounced callback uses the
+	// freshest one (consumer callbacks close over data that may change
+	// between keystroke and debounce fire).
+	const ctxRef = useRef(ctx);
+	ctxRef.current = ctx;
+	// Clear any pending debounce on unmount so we don't fire against a
+	// stale parent.
 	useEffect(() => () => window.clearTimeout(debounce.current), []);
 	return (
 		<div className="flex items-center gap-2 border-b border-border px-3 py-2">
@@ -86,7 +91,7 @@ function SearchInputPanel({ spec, ctx }: any) {
 					setValue(e.target.value);
 					window.clearTimeout(debounce.current);
 					debounce.current = window.setTimeout(
-						() => spec.onChange(e.target.value, ctx),
+						() => spec.onChange(e.target.value, ctxRef.current),
 						spec.debounceMs ?? 200
 					);
 				}}
@@ -412,6 +417,14 @@ function MonthGridPanel({ spec, ctx }: any) {
 	}
 
 	// ─── Optional time row ─────────────────────────────────────────────────
+	// Commit the time edit. If the menu has no value yet, anchor to today
+	// at midnight so the consumer's onChange always fires — otherwise time
+	// keystrokes would silently disappear until a date is picked.
+	const commitTime = (hh: number, mm: number) => {
+		const base = spec.value ? new Date(spec.value) : new Date(new Date().setHours(0, 0, 0, 0));
+		base.setHours(hh, mm, 0, 0);
+		spec.onChange(base.getTime(), ctx);
+	};
 	const timeRow = spec.withTime ? (
 		<div className="mt-2 flex items-center justify-center gap-1 border-t border-[color:var(--fm-surface-border)] pt-2">
 			<input
@@ -422,11 +435,7 @@ function MonthGridPanel({ spec, ctx }: any) {
 				onChange={(e) => {
 					const hh = Math.max(0, Math.min(23, Number(e.target.value) || 0));
 					setTime((t) => ({ ...t, hh }));
-					if (spec.value) {
-						const d = new Date(spec.value);
-						d.setHours(hh, time.mm, 0, 0);
-						spec.onChange(d.getTime(), ctx);
-					}
+					commitTime(hh, time.mm);
 				}}
 				className="w-10 rounded-md border border-[color:var(--fm-surface-border)] bg-transparent px-1 py-0.5 text-center font-mono text-xs tabular-nums"
 				aria-label="Hours"
@@ -440,11 +449,7 @@ function MonthGridPanel({ spec, ctx }: any) {
 				onChange={(e) => {
 					const mm = Math.max(0, Math.min(59, Number(e.target.value) || 0));
 					setTime((t) => ({ ...t, mm }));
-					if (spec.value) {
-						const d = new Date(spec.value);
-						d.setHours(time.hh, mm, 0, 0);
-						spec.onChange(d.getTime(), ctx);
-					}
+					commitTime(time.hh, mm);
 				}}
 				className="w-10 rounded-md border border-[color:var(--fm-surface-border)] bg-transparent px-1 py-0.5 text-center font-mono text-xs tabular-nums"
 				aria-label="Minutes"

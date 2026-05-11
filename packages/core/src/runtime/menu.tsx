@@ -47,12 +47,18 @@ export function MenuView({ open }: MenuProps) {
 
 	const onClose = useCallback(() => store.close(open.id), [store, open.id]);
 
-	// Position
+	// Position — depend only on the *inputs* to placement (anchor + config),
+	// not the whole OpenMenu object. Every store emission produces a new
+	// `open` reference (state transitions, sibling updates, …), and keying
+	// off it would tear down autoUpdate on every emit and risk stale
+	// `setPos` writes from in-flight `compute()` promises.
+	const positionCfg = open.config.position;
+	const positionEl = open.param.element;
+	const positionRect = open.param.rect;
 	useEffect(() => {
 		const el = containerEl;
 		if (!el) return;
-		const cfg = open.config.position;
-		const ref = open.param.element ?? open.param.rect;
+		const ref = positionEl ?? positionRect;
 		if (!ref) {
 			const w = el.offsetWidth;
 			const h = el.offsetHeight;
@@ -65,10 +71,22 @@ export function MenuView({ open }: MenuProps) {
 		const referenceEl = typeof ref === 'string' ? document.querySelector(ref) : (ref as Element | DOMRect);
 		if (!referenceEl) return;
 		if (referenceEl instanceof Element) {
-			return watchPosition(referenceEl, el, cfg, (r) => setPos({ x: r.x, y: r.y, placement: r.placement }));
+			return watchPosition(referenceEl, el, positionCfg, (r) =>
+				setPos({ x: r.x, y: r.y, placement: r.placement })
+			);
 		}
-		void compute(referenceEl, el, cfg).then((r) => setPos({ x: r.x, y: r.y, placement: r.placement }));
-	}, [open, containerEl]);
+		// DOMRect branch is one-shot — guard the resolution so a previous
+		// effect's pending promise can't write a stale position after the
+		// next one already replaced it.
+		let cancelled = false;
+		void compute(referenceEl, el, positionCfg).then((r) => {
+			if (cancelled) return;
+			setPos({ x: r.x, y: r.y, placement: r.placement });
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [containerEl, positionCfg, positionEl, positionRect]);
 
 	useEffect(() => {
 		// onMount may return a cleanup function (mirrors useEffect's contract)
@@ -119,7 +137,11 @@ export function MenuView({ open }: MenuProps) {
 			{/* Safe-mouse polygon connects the trigger row to the child menu so
 			    the cursor can travel diagonally without exiting either zone. */}
 			{isSub && open.param.triggerRect && (
-				<SafePolygon triggerRect={open.param.triggerRect} floatingEl={containerEl} />
+				<SafePolygon
+					triggerEl={open.param.element instanceof Element ? open.param.element : undefined}
+					triggerRect={open.param.triggerRect}
+					floatingEl={containerEl}
+				/>
 			)}
 			{showDimmer && (
 				<div

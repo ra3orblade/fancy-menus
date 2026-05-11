@@ -11,11 +11,15 @@ interface Props {
 export function FilterInput({ config, onChange }: Props) {
 	const [value, setValue] = useState('');
 	const inputRef = useRef<HTMLInputElement | null>(null);
-	const debounce = useRef<number>();
+	const debounce = useRef<number | undefined>(undefined);
 
 	useEffect(() => {
 		if (config.focusOnMount !== false) inputRef.current?.focus();
 	}, [config.focusOnMount]);
+
+	// Clear any pending debounced onChange when the filter unmounts so we
+	// don't fire against a stale parent (the menu may have closed).
+	useEffect(() => () => window.clearTimeout(debounce.current), []);
 
 	const fire = (v: string) => {
 		setValue(v);

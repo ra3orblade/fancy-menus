@@ -13,11 +13,15 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 
 interface Props {
+	/** Element that opened the sub-menu — measured each recompute so the
+	 *  polygon tracks scroll / layout shifts. Falls back to `triggerRect`
+	 *  when the element isn't known. */
+	triggerEl?: Element | null;
 	triggerRect: DOMRect | undefined;
 	floatingEl: HTMLElement | null;
 }
 
-export function SafePolygon({ triggerRect, floatingEl }: Props) {
+export function SafePolygon({ triggerEl, triggerRect, floatingEl }: Props) {
 	const [shape, setShape] = useState<{
 		left: number;
 		top: number;
@@ -30,11 +34,16 @@ export function SafePolygon({ triggerRect, floatingEl }: Props) {
 	useLayoutEffect(() => {
 		if (!triggerRect || !floatingEl) return;
 		const recompute = () => {
+			// Prefer measuring the live element so the polygon follows
+			// scroll / layout changes; fall back to the captured rect.
+			const t = triggerEl?.getBoundingClientRect() ?? triggerRect;
 			const f = floatingEl.getBoundingClientRect();
+			// Re-bind names so the math below reads off `t` (the live rect).
+			const triggerLive = t;
 			// Decide which side of the trigger the floating sits on. We use
 			// the horizontal midpoint — most cascading menus open to the
 			// right, but mirror cleanly when shifted left by the runtime.
-			const onRight = f.left >= triggerRect.right - 4;
+			const onRight = f.left >= triggerLive.right - 4;
 
 			let left: number;
 			let top: number;
@@ -42,22 +51,22 @@ export function SafePolygon({ triggerRect, floatingEl }: Props) {
 			let height: number;
 			let clipPath: string;
 			if (onRight) {
-				left = triggerRect.right;
-				top = Math.min(triggerRect.top, f.top);
-				width = Math.max(0, f.left - triggerRect.right);
-				height = Math.max(triggerRect.bottom, f.bottom) - top;
-				const tt = triggerRect.top - top;
-				const tb = triggerRect.bottom - top;
+				left = triggerLive.right;
+				top = Math.min(triggerLive.top, f.top);
+				width = Math.max(0, f.left - triggerLive.right);
+				height = Math.max(triggerLive.bottom, f.bottom) - top;
+				const tt = triggerLive.top - top;
+				const tb = triggerLive.bottom - top;
 				const ft = f.top - top;
 				const fb = f.bottom - top;
 				clipPath = `polygon(0 ${tt}px, 0 ${tb}px, 100% ${fb}px, 100% ${ft}px)`;
 			} else {
 				left = f.right;
-				top = Math.min(triggerRect.top, f.top);
-				width = Math.max(0, triggerRect.left - f.right);
-				height = Math.max(triggerRect.bottom, f.bottom) - top;
-				const tt = triggerRect.top - top;
-				const tb = triggerRect.bottom - top;
+				top = Math.min(triggerLive.top, f.top);
+				width = Math.max(0, triggerLive.left - f.right);
+				height = Math.max(triggerLive.bottom, f.bottom) - top;
+				const tt = triggerLive.top - top;
+				const tb = triggerLive.bottom - top;
 				const ft = f.top - top;
 				const fb = f.bottom - top;
 				clipPath = `polygon(100% ${tt}px, 100% ${tb}px, 0 ${fb}px, 0 ${ft}px)`;
@@ -77,7 +86,7 @@ export function SafePolygon({ triggerRect, floatingEl }: Props) {
 			window.removeEventListener('scroll', onResize, true);
 			if (raf.current) cancelAnimationFrame(raf.current);
 		};
-	}, [triggerRect, floatingEl]);
+	}, [triggerEl, triggerRect, floatingEl]);
 
 	if (!shape || shape.width <= 0 || shape.height <= 0) return null;
 

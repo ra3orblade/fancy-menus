@@ -104,15 +104,26 @@ export class MenuStore {
 
 		const existing = this.menus.findIndex((m) => m.id === id);
 		if (existing >= 0) {
-			const next = this.menus.slice();
-			next[existing] = {
-				...next[existing]!,
-				param: { ...next[existing]!.param, ...param },
-				state: next[existing]!.state === MenuState.Closing ? MenuState.Open : next[existing]!.state,
-			};
-			this.menus = next;
-			this.emit();
-			return;
+			const prev = this.menus[existing]!;
+			const nextParam = { ...prev.param, ...param };
+			// If the parentId is changing, the menu's depth is wrong and
+			// any sibling-replace logic should run again. Fall through to
+			// the open-as-new code path so we get a fresh slot.
+			const parentChanged = (param.parentId ?? prev.param.parentId) !== prev.param.parentId;
+			if (!parentChanged) {
+				const next = this.menus.slice();
+				next[existing] = {
+					...prev,
+					param: nextParam,
+					state: prev.state === MenuState.Closing ? MenuState.Open : prev.state,
+				};
+				this.menus = next;
+				this.emit();
+				return;
+			}
+			// Drop the stale entry; the rest of this method will re-add it
+			// at the right depth and apply sibling-replace.
+			this.menus = this.menus.filter((m) => m.id !== id);
 		}
 
 		// Cascading menus replace — opening a new sub-menu under a given
@@ -286,6 +297,10 @@ export class MenuStore {
 		this.menus = next;
 		this.emit();
 
+		// Clear any prior open timer for this id before scheduling a new one
+		// so rapid navigateTo→back→navigateTo cycles don't leak timers.
+		const prevOpenTimer = this.timers.get(`open:${newId}`);
+		if (prevOpenTimer) window.clearTimeout(prevOpenTimer);
 		const t = window.setTimeout(() => {
 			this.timers.delete(`open:${newId}`);
 			const idx = this.menus.findIndex((m) => m.id === newId);
@@ -330,6 +345,8 @@ export class MenuStore {
 		this.menus = next;
 		this.emit();
 
+		const prevOpenTimer = this.timers.get(`open:${prev.id}`);
+		if (prevOpenTimer) window.clearTimeout(prevOpenTimer);
 		const t = window.setTimeout(() => {
 			this.timers.delete(`open:${prev.id}`);
 			const idx = this.menus.findIndex((m) => m.id === prev.id);

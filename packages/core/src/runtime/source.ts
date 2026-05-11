@@ -115,8 +115,19 @@ export function useResolvedSource<TItem>(
 		// drag-reorder or filter-state edits).
 	}, [source, filter, ctx.data]);
 
+	// Track in-flight state via a ref so rapid back-to-back `loadMore()`
+	// calls don't all see the render-time `state.loading: false` and fire
+	// duplicate pages. The state setter is still the source of truth for
+	// re-renders; this ref only gates the *next* request.
+	const loadingRef = useRef(false);
+	useEffect(() => {
+		loadingRef.current = state.loading;
+	}, [state.loading]);
+
 	const loadMore = () => {
-		if (source.kind !== SourceKind.Async || state.loading || !state.hasMore) return;
+		if (source.kind !== SourceKind.Async || !state.hasMore) return;
+		if (loadingRef.current) return;
+		loadingRef.current = true;
 		const myGen = genRef.current;
 		setState((s) => ({ ...s, loading: true }));
 		source
@@ -129,10 +140,12 @@ export function useResolvedSource<TItem>(
 					hasMore: res.hasMore ?? false,
 				}));
 				offsetRef.current += res.items.length;
+				loadingRef.current = false;
 			})
 			.catch(() => {
 				if (myGen !== genRef.current) return;
 				setState((s) => ({ ...s, loading: false }));
+				loadingRef.current = false;
 			});
 	};
 

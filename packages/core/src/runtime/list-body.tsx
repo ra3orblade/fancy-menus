@@ -184,24 +184,24 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 	// tracked) so the original stays in place and dnd-kit's collision
 	// detection sees the cursor over the *other* sortable items naturally.
 	const [activeDragId, setActiveDragId] = useState<string | null>(null);
-	const activeDragItem = useMemo(
-		() =>
-			activeDragId == null
-				? null
-				: items.find((it: any, i: number) => String((it as { id?: unknown })?.id ?? i) === activeDragId),
-		[activeDragId, items]
+	// Snapshot the dragged row at drag-start so a mid-drag reorder of the
+	// underlying items array doesn't flip the overlay to a different row.
+	const draggedItemRef = useRef<any>(null);
+	const activeDragItem = activeDragId == null ? null : draggedItemRef.current;
+	const onDragStart = useCallback(
+		(e: DragStartEvent) => {
+			document.body.setAttribute('data-fm-dragging', 'true');
+			const id = String(e.active.id);
+			setActiveDragId(id);
+			draggedItemRef.current = items.find(
+				(it: any, i: number) => String((it as { id?: unknown })?.id ?? i) === id
+			);
+		},
+		[items]
 	);
-	const onDragStart = useCallback((e: DragStartEvent) => {
-		document.body.setAttribute('data-fm-dragging', 'true');
-		setActiveDragId(String(e.active.id));
-	}, []);
 	const onDragEnd = useCallback(
 		(e: DragEndEvent) => {
 			setActiveDragId(null);
-			document.body.dataset.fmLastDrag = JSON.stringify({
-				active: String(e.active?.id ?? ''),
-				over: String(e.over?.id ?? ''),
-			});
 			if (!sortable) return;
 			const { active, over } = e;
 			if (!over || active.id === over.id) return;
@@ -324,7 +324,12 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 				document.body.removeAttribute('data-fm-dragging');
 				onDragEnd(e);
 			}}
-			onDragCancel={() => document.body.removeAttribute('data-fm-dragging')}
+			onDragCancel={() => {
+				document.body.removeAttribute('data-fm-dragging');
+				// Without clearing here, the overlay clone stays visible after
+				// an Escape-cancelled drag until the next drag start.
+				setActiveDragId(null);
+			}}
 		>
 			<SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
 				{list}
