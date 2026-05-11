@@ -23,6 +23,20 @@ export interface ChromeConfig {
 	/** Static title or computed from the current MenuCtx (data + helpers). */
 	title?: string | ((ctx: MenuCtx) => string);
 
+	/**
+	 * Accessible name fallback used when `title` is a function or absent. Avoid
+	 * exposing the internal menu id to screen readers — when neither this nor
+	 * a string `title` is provided, no aria-label is emitted on the shell.
+	 */
+	ariaLabel?: string;
+
+	/**
+	 * ARIA role for the outer shell. Defaults to `dialog`, which is correct
+	 * when the chrome carries a title, tabs, filter, or footer alongside the
+	 * listbox body. Use `menu` for a pure popup-menu of options without chrome.
+	 */
+	role?: 'dialog' | 'menu' | 'listbox';
+
 	/** Show a back arrow in the title bar. Wired to onBack. */
 	withBack?: boolean;
 	onBack?: () => void;

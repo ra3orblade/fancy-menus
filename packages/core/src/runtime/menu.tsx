@@ -158,8 +158,12 @@ export function MenuView({ open }: MenuProps) {
 			)}
 			<div
 				ref={containerRef}
-				role="dialog"
-				aria-label={typeof open.config.chrome?.title === 'string' ? open.config.chrome.title : open.id}
+				role={open.config.chrome?.role ?? 'dialog'}
+				aria-label={
+					typeof open.config.chrome?.title === 'string'
+						? open.config.chrome.title
+						: open.config.chrome?.ariaLabel
+				}
 				data-fm-menu-id={open.id}
 				data-placement={pos?.placement}
 				data-state={open.state}
@@ -208,7 +212,7 @@ export function MenuView({ open }: MenuProps) {
 				{/* Skip the body wrapper entirely when the body is a Custom one
 				    that measures to zero height (e.g. find-in-page, where the
 				    chrome carries the entire UI). */}
-				{!isEmptyBody(body) && (
+				{!isEmptyBody(body, ctx) && (
 					<div className="fm-body">
 						<BodyView
 							body={body}
@@ -228,12 +232,15 @@ export function MenuView({ open }: MenuProps) {
 	return createPortal(content, document.body);
 }
 
-function isEmptyBody(body: { kind: string; measureHeight?: (ctx: any) => number }): boolean {
+function isEmptyBody(
+	body: { kind: string; measureHeight?: (ctx: any) => number },
+	ctx: import('../types/context').MenuCtx
+): boolean {
 	// Heuristic: a `kind: Custom` body that explicitly measures to 0 contributes
 	// no UI, so suppress the wrapper (and its surrounding border) entirely.
 	if ((body as any).kind !== 'custom') return false;
 	const measure = (body as any).measureHeight as ((ctx: any) => number) | undefined;
-	return typeof measure === 'function' && measure(undefined) === 0;
+	return typeof measure === 'function' && measure(ctx) === 0;
 }
 
 /**

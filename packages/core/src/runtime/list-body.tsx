@@ -9,6 +9,7 @@ import {
 	type DragEndEvent,
 	DragOverlay,
 	type DragStartEvent,
+	KeyboardSensor,
 	PointerSensor,
 	pointerWithin,
 	rectIntersection,
@@ -16,7 +17,7 @@ import {
 	useSensors,
 } from '@dnd-kit/core';
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -176,8 +177,13 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 	}, [items, body.rows]);
 	// activationConstraint distance:4 means the user must move ≥4px before
 	// the drag commits — small enough to feel responsive, large enough that
-	// a pure click on the handle still toggles cleanly.
-	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+	// a pure click on the handle still toggles cleanly. The KeyboardSensor
+	// lets users focus the drag handle and reorder rows via Space/Enter +
+	// ArrowUp/ArrowDown, which is required for keyboard-only accessibility.
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+	);
 	// Track the actively-dragged id so we can render it in the DragOverlay.
 	// The overlay is the canonical pattern for combining dnd-kit with a
 	// virtualized list — it renders the dragged element separately (cursor-

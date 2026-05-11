@@ -160,13 +160,20 @@ function matchShortcut(e: DOMKbdEvent, keys: string): boolean {
 		const parts = combo.split('+').map((s) => s.trim());
 		const required = new Set(parts);
 		const key = parts[parts.length - 1]!;
+		// Strict modifier match: a modifier matches only when its requested
+		// state equals the event's state. Without this, `cmd+k` would also
+		// fire on `cmd+shift+k`, which collides with consumer shortcuts that
+		// reuse the same key letter under a different modifier set.
+		const wantShift = required.has('shift');
+		const wantAlt = required.has('alt');
+		const wantCtrl = required.has('ctrl');
+		const wantMeta = required.has('cmd') || required.has('meta');
 		return (
 			e.key.toLowerCase() === key &&
-			(!required.has('shift') || e.shiftKey) &&
-			(!required.has('alt') || e.altKey) &&
-			(!required.has('ctrl') || e.ctrlKey) &&
-			(!required.has('cmd') || e.metaKey) &&
-			(!required.has('meta') || e.metaKey)
+			e.shiftKey === wantShift &&
+			e.altKey === wantAlt &&
+			e.ctrlKey === wantCtrl &&
+			e.metaKey === wantMeta
 		);
 	});
 }
