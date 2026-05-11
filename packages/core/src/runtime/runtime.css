@@ -1,0 +1,384 @@
+/**
+ * fancy-menus runtime stylesheet.
+ *
+ * Defines the public design-system surface as CSS custom properties on
+ * `:root`. Consumers override any of these to retheme — everything in the
+ * runtime references them through `var(--fm-*)`.
+ *
+ * Import once at app entry:
+ *   import '@fancy-menus/core/runtime/runtime.css';
+ */
+
+:root {
+	/* ─── Surface ───────────────────────────────────────────────────────── */
+	--fm-surface-bg: hsl(0 0% 100%);
+	--fm-surface-fg: hsl(222.2 84% 4.9%);
+	--fm-surface-border: hsl(214.3 31.8% 91.4%);
+	--fm-surface-radius: 8px;
+	--fm-surface-shadow: 0 10px 28px -8px rgb(0 0 0 / 0.18), 0 2px 6px -2px rgb(0 0 0 / 0.06);
+
+	/* ─── Stack ─────────────────────────────────────────────────────────── */
+	--fm-z-dimmer: 1000;
+	--fm-z-menu: 1001;
+
+	/* ─── Motion ────────────────────────────────────────────────────────── */
+	/* Decelerate — fast out, slow in. Best for menu open / overlay reveal. */
+	--fm-ease-decelerate: cubic-bezier(0.2, 0, 0, 1);
+	/* Spring — slight overshoot. Good for affirmative state changes. */
+	--fm-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+	/* Smooth — symmetric, no overshoot. Default for hover / micro-state. */
+	--fm-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+	--fm-duration-open: 120ms;
+	--fm-duration-close: 90ms;
+	--fm-duration-hover: 60ms;
+	--fm-duration-toggle: 120ms;
+
+	/* ─── Density ───────────────────────────────────────────────────────── */
+	/* Outer inset between body and menu border. Inset is what keeps row
+		 hover backgrounds from touching the menu's edge. */
+	--fm-body-padding-x: 4px;
+	--fm-body-padding-y: 4px;
+
+	/* Row geometry */
+	--fm-row-padding-x: 8px;
+	--fm-row-padding-y: 4px;
+	--fm-row-gap: 8px;
+	--fm-row-radius: 4px;
+	--fm-row-min-h: 28px;
+	--fm-row-big-min-h: 44px;
+
+	/* Section header */
+	--fm-section-padding-x: 8px;
+	--fm-section-padding-top: 8px;
+	--fm-section-padding-bot: 4px;
+
+	/* Header / footer chrome */
+	--fm-chrome-padding-x: 12px;
+	--fm-chrome-padding-y: 8px;
+
+	/* ─── Typography ────────────────────────────────────────────────────── */
+	--fm-font-size-row: 13px;
+	--fm-font-size-caption: 11px;
+	--fm-font-size-section: 10px;
+	--fm-font-weight-section: 600;
+	--fm-letter-section: 0.06em;
+	--fm-line-height-row: 1.3;
+
+	/* ─── States ────────────────────────────────────────────────────────── */
+	--fm-row-hover-bg: hsl(210 40% 96.1% / 0.6);
+	--fm-row-active-bg: hsl(210 40% 96.1%);
+	--fm-row-active-fg: hsl(222.2 47.4% 11.2%);
+	--fm-row-disabled-opacity: 0.5;
+	--fm-divider-color: var(--fm-surface-border);
+
+	/* Selection (multi-select check mark, switch on-state, etc.) */
+	--fm-accent: hsl(222.2 47.4% 11.2%);
+	--fm-accent-fg: hsl(210 40% 98%);
+	--fm-destructive: hsl(0 84.2% 60.2%);
+	--fm-muted-fg: hsl(215.4 16.3% 46.9%);
+}
+
+/* Dark mode — override only what differs. */
+.dark,
+[data-theme="dark"] {
+	--fm-surface-bg: hsl(222.2 84% 4.9%);
+	--fm-surface-fg: hsl(210 40% 98%);
+	--fm-surface-border: hsl(217.2 32.6% 17.5%);
+	--fm-row-hover-bg: hsl(217.2 32.6% 17.5% / 0.6);
+	--fm-row-active-bg: hsl(217.2 32.6% 17.5%);
+	--fm-row-active-fg: hsl(210 40% 98%);
+	--fm-accent: hsl(210 40% 98%);
+	--fm-accent-fg: hsl(222.2 47.4% 11.2%);
+	--fm-muted-fg: hsl(215 20.2% 65.1%);
+}
+
+/* ─── Components ──────────────────────────────────────────────────────── */
+
+.fm-menu {
+	position: fixed;
+	z-index: var(--fm-z-menu);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--fm-surface-bg);
+	color: var(--fm-surface-fg);
+	border: 1px solid var(--fm-surface-border);
+	border-radius: var(--fm-surface-radius);
+	box-shadow: var(--fm-surface-shadow);
+	max-height: calc(100vh - 32px);
+	/* `transform-origin` is set inline from the resolved placement so the
+	   scale-in animation appears to grow from the trigger edge. */
+	animation: fm-open var(--fm-duration-open) var(--fm-ease-decelerate);
+	will-change: transform, opacity;
+}
+.fm-menu--closing {
+	/* Forwards keeps the final keyframe (opacity 0) painted until React
+	   removes the node, so the menu doesn't pop back to opacity:1 in the
+	   gap between animationend and unmount. */
+	animation: fm-close var(--fm-duration-close, 90ms) var(--fm-ease-smooth) forwards;
+}
+
+@keyframes fm-open {
+	from {
+		opacity: 0;
+		transform: scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+@keyframes fm-close {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.97);
+	}
+}
+
+.fm-dimmer {
+	position: fixed;
+	inset: 0;
+	z-index: var(--fm-z-dimmer);
+	animation: fm-dimmer-in var(--fm-duration-open) var(--fm-ease-smooth);
+}
+.fm-dimmer--closing {
+	animation: fm-dimmer-out var(--fm-duration-close, 90ms) var(--fm-ease-smooth) forwards;
+}
+.fm-dimmer--passthrough {
+	pointer-events: none;
+}
+.fm-dimmer--visible {
+	background: rgb(0 0 0 / 0.3);
+}
+
+@keyframes fm-dimmer-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes fm-dimmer-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+.fm-body {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+	padding: var(--fm-body-padding-y) var(--fm-body-padding-x);
+}
+
+.fm-chrome {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: var(--fm-chrome-padding-y) var(--fm-chrome-padding-x);
+	border-bottom: 1px solid var(--fm-surface-border);
+}
+.fm-chrome--footer {
+	border-top: 1px solid var(--fm-surface-border);
+	border-bottom: 0;
+}
+
+.fm-list {
+	position: relative;
+	max-height: 60vh;
+	min-height: 40px;
+	overflow-y: auto;
+	outline: none;
+}
+
+/* Horizontal toolbar variant — icon bars, format strips, segmented controls. */
+.fm-list--horizontal {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 2px;
+	max-height: none;
+	min-height: 0;
+	overflow-y: visible;
+	overflow-x: auto;
+	padding: 0;
+}
+.fm-list--horizontal > * {
+	display: contents;
+}
+.fm-list--horizontal .fm-row {
+	width: auto;
+	min-width: 28px;
+	min-height: 28px;
+	padding: 4px 6px;
+	gap: 0;
+	justify-content: center;
+}
+/* In horizontal mode the keyboard "active" state is subtle so it doesn't
+   shout when the toolbar is opened with a mouse. */
+.fm-list--horizontal .fm-row[data-active="true"] {
+	background: var(--fm-row-hover-bg);
+	color: inherit;
+}
+.fm-list--horizontal .fm-row__name {
+	display: none;
+}
+.fm-list--horizontal .fm-row[data-show-name="true"] .fm-row__name {
+	display: inline;
+	margin-left: 4px;
+}
+.fm-list--horizontal .fm-row__icon {
+	color: var(--fm-surface-fg);
+}
+
+.fm-row {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: var(--fm-row-gap);
+	padding: var(--fm-row-padding-y) var(--fm-row-padding-x);
+	min-height: var(--fm-row-min-h);
+	font-size: var(--fm-font-size-row);
+	line-height: var(--fm-line-height-row);
+	border-radius: var(--fm-row-radius);
+	cursor: pointer;
+	user-select: none;
+	color: var(--fm-surface-fg);
+	transition: background-color var(--fm-duration-hover) var(--fm-ease-smooth);
+}
+.fm-row:hover {
+	background: var(--fm-row-hover-bg);
+}
+.fm-row[data-active="true"] {
+	background: var(--fm-row-active-bg);
+	color: var(--fm-row-active-fg);
+}
+/* Toggle-button "pressed" state for toolbar usage (active marks). */
+.fm-row[data-pressed="true"] {
+	background: var(--fm-accent);
+	color: var(--fm-accent-fg);
+}
+.fm-row[data-pressed="true"] .fm-row__icon {
+	color: inherit;
+}
+.fm-row[aria-disabled="true"],
+.fm-row[data-disabled="true"] {
+	opacity: var(--fm-row-disabled-opacity);
+	pointer-events: none;
+}
+.fm-row--big {
+	min-height: var(--fm-row-big-min-h);
+	padding-block: 6px;
+}
+.fm-row--readonly {
+	cursor: default;
+}
+
+.fm-row__name {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.fm-row__caption {
+	flex: 0 0 auto;
+	font-size: var(--fm-font-size-caption);
+	color: var(--fm-muted-fg);
+}
+.fm-row__icon {
+	flex: 0 0 auto;
+	color: var(--fm-muted-fg);
+	display: inline-flex;
+}
+.fm-row__suffix {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+/* Defensive: if a slot ever ends up rendered but empty, collapse it so the
+   parent flex `gap` doesn't reserve space around nothing. */
+.fm-row__icon:empty,
+.fm-row__suffix:empty,
+.fm-row__caption:empty {
+	display: none;
+}
+
+.fm-section {
+	padding: var(--fm-section-padding-top) var(--fm-section-padding-x) var(--fm-section-padding-bot);
+	font-size: var(--fm-font-size-section);
+	font-weight: var(--fm-font-weight-section);
+	letter-spacing: var(--fm-letter-section);
+	text-transform: uppercase;
+	color: var(--fm-muted-fg);
+}
+
+.fm-divider {
+	height: 1px;
+	background: var(--fm-divider-color);
+	margin: 4px 6px;
+}
+
+.fm-switch {
+	display: inline-flex;
+	align-items: center;
+	width: 28px;
+	height: 16px;
+	border-radius: 9999px;
+	background: hsl(214.3 31.8% 91.4%);
+	transition: background-color var(--fm-duration-toggle) var(--fm-ease-smooth);
+	flex: 0 0 auto;
+}
+.fm-switch[data-on="true"] {
+	background: var(--fm-accent);
+}
+.fm-switch__thumb {
+	width: 12px;
+	height: 12px;
+	border-radius: 9999px;
+	background: var(--fm-surface-bg);
+	transform: translateX(2px);
+	/* Spring easing on the thumb gives the toggle a small overshoot —
+	   reads as more responsive than a symmetric ease. */
+	transition: transform var(--fm-duration-toggle) var(--fm-ease-spring);
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+}
+.fm-switch[data-on="true"] .fm-switch__thumb {
+	transform: translateX(14px);
+}
+
+/* DragOverlay clone — the dragged row renders here while floating with the
+   cursor. Give it a background + shadow so it visually "lifts off" the list. */
+.fm-row-overlay {
+	background: var(--fm-surface-bg);
+	border: 1px solid var(--fm-surface-border);
+	border-radius: var(--fm-row-radius);
+	box-shadow: 0 6px 20px -6px rgb(0 0 0 / 0.2);
+	padding: 0 var(--fm-body-padding-x);
+	cursor: grabbing;
+}
+
+.fm-swatch {
+	width: 16px;
+	height: 16px;
+	border-radius: 3px;
+	border: 1px solid var(--fm-surface-border);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+}
+.fm-swatch__letter {
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 1;
+}

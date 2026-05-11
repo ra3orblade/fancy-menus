@@ -1,0 +1,14 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"noEmit": true,
+		"paths": {
+			"@/*": ["./src/*"],
+			"@fancy-menus/core": ["../../packages/core/src/index.ts"],
+			"@fancy-menus/core/*": ["../../packages/core/src/*"]
+		},
+		"baseUrl": "."
+	},
+	"include": ["src", "vite.config.ts", "tailwind.config.ts"]
+}
