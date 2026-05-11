@@ -357,14 +357,28 @@
 }
 
 /* DragOverlay clone — the dragged row renders here while floating with the
-   cursor. Give it a background + shadow so it visually "lifts off" the list. */
+   cursor. The styling deliberately exaggerates the lift (accent border + tall
+   shadow + slight scale) so the user always sees which row is moving against
+   the (semi-transparent) source placeholder underneath. */
 .fm-row-overlay {
 	background: var(--fm-surface-bg);
-	border: 1px solid var(--fm-surface-border);
+	border: 1px solid var(--fm-accent);
 	border-radius: var(--fm-row-radius);
-	box-shadow: 0 6px 20px -6px rgb(0 0 0 / 0.2);
+	box-shadow: 0 16px 32px -8px rgb(0 0 0 / 0.28), 0 4px 12px -2px rgb(0 0 0 / 0.18), 0 0 0 1px var(--fm-accent);
 	padding: 0 var(--fm-body-padding-x);
 	cursor: grabbing;
+	transform: scale(1.02);
+	transition: transform var(--fm-duration-hover) var(--fm-ease-smooth);
+}
+/* Source-row placeholder while its clone floats with the cursor — a dashed
+   outline marks the slot the cursor would return to, which is more legible
+   than opacity-alone fading. The data-attr lives on the wrapper that
+   useSortable() mounts; the visible row sits one level inside. */
+[data-fm-drag-source="true"] .fm-row {
+	background: var(--fm-row-hover-bg);
+	outline: 1.5px dashed var(--fm-accent);
+	outline-offset: -2px;
+	border-radius: var(--fm-row-radius);
 }
 
 .fm-swatch {

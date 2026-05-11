@@ -36,7 +36,11 @@ export function ChipRowView<TItem>({ item, spec, active, ctx, onActivate, prefix
 						s.trailing?.onClick?.(item, ctx);
 					}}
 					className="fm-row__chip-trailing"
-					aria-label="Toggle"
+					aria-label={
+						typeof s.trailing.ariaLabel === 'function'
+							? s.trailing.ariaLabel(item)
+							: (s.trailing.ariaLabel ?? 'Toggle')
+					}
 				>
 					<IconView icon={trailingIcon} defaultSize={12} />
 				</button>
@@ -49,7 +53,11 @@ export function ChipRowView<TItem>({ item, spec, active, ctx, onActivate, prefix
 						s.onDelete?.(item, ctx);
 					}}
 					className="fm-row__chip-delete"
-					aria-label="Remove"
+					aria-label={
+						typeof s.deleteAriaLabel === 'function'
+							? s.deleteAriaLabel(item)
+							: (s.deleteAriaLabel ?? 'Remove')
+					}
 				>
 					<X weight="bold" />
 				</button>

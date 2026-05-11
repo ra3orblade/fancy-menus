@@ -123,7 +123,10 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 			onSubmenuOpen: (i) => {
 				const item = items[i];
 				const spec = pickSpec(body.rows, item) as any;
-				if (!spec || spec.kind !== RowKind.Item || !spec.subMenuId) return false;
+				// Both ItemRow and SelectNavRow expose a `subMenuId`; either
+				// one should open its sub-menu on ArrowRight.
+				if (!spec || (spec.kind !== RowKind.Item && spec.kind !== RowKind.SelectNav)) return false;
+				if (!spec.subMenuId) return false;
 				const subId = typeof spec.subMenuId === 'function' ? spec.subMenuId(item) : spec.subMenuId;
 				if (!subId) return false;
 				const rowEl = scrollerRef.current?.querySelector(`[data-index="${i}"] [data-submenu-id]`);
@@ -386,16 +389,55 @@ function activateRow<TItem>(item: TItem | undefined, rows: RowSpec<TItem>[], ctx
 	if (item == null) return;
 	const spec = pickSpec(rows, item) as any;
 	if (!spec) return;
-	if (spec.kind === RowKind.Item) {
-		spec.onClick?.(item, new MouseEvent('click') as any, ctx);
-	} else if (spec.kind === RowKind.Switch) {
-		spec.onSwitch?.(item, !spec.switchValue?.(item), ctx);
-	} else if (spec.kind === RowKind.Color) {
-		spec.onSelect?.(item, ctx);
-	} else if (spec.kind === RowKind.Participant) {
-		spec.onSelect?.(item, ctx);
-	} else if (spec.kind === RowKind.Add) {
-		spec.onClick?.(undefined, ctx);
+	// Synthetic MouseEvent for keyboard activation: consumers expect a
+	// MouseEvent in onClick handlers; we satisfy the type signature without
+	// claiming the user clicked. Detail = 0 lets handlers distinguish from
+	// real clicks if they care.
+	const fakeEvent = new MouseEvent('click', { detail: 0 }) as any;
+	switch (spec.kind) {
+		case RowKind.Item:
+			spec.onClick?.(item, fakeEvent, ctx);
+			return;
+		case RowKind.Switch:
+			spec.onSwitch?.(item, !spec.switchValue?.(item), ctx);
+			return;
+		case RowKind.Checkbox:
+			spec.onToggle?.(item, !spec.checked?.(item), ctx);
+			return;
+		case RowKind.Color:
+			spec.onSelect?.(item, ctx);
+			return;
+		case RowKind.Participant:
+			spec.onSelect?.(item, ctx);
+			return;
+		case RowKind.Add:
+			spec.onClick?.(undefined, ctx);
+			return;
+		case RowKind.Object:
+			spec.onClick?.(item, fakeEvent, ctx);
+			return;
+		case RowKind.Chip:
+			spec.onClick?.(item, fakeEvent, ctx);
+			return;
+		case RowKind.FilterRule:
+			spec.onClick?.(item, ctx);
+			return;
+		case RowKind.SelectNav: {
+			// Mirror the click path in selectNav.tsx — spawn the sub-menu
+			// anchored to the active row's element if we can find it in the
+			// DOM. The keyboard handler doesn't carry an event reference, so
+			// we fall back to spawning anchorless and let the position
+			// pipeline measure on next paint.
+			if (!spec.subMenuId) return;
+			void ctx.open(spec.subMenuId, { data: ctx.data });
+			return;
+		}
+		case RowKind.Sortable:
+			// Activate the inner row spec (sortable is a structural wrapper).
+			activateRow(item, [{ ...spec.inner, match: spec.match } as RowSpec<TItem>], ctx);
+			return;
+		default:
+			return;
 	}
 }
 

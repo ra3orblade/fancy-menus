@@ -45,12 +45,15 @@ export function makeCtx(
 		open: async (id, param) => {
 			// Resolve sub-menu registry entry: when this menu declared
 			// `subMenus[id]`, the caller is referencing a local alias whose
-			// concrete target is `spec.menuId`. The registry can also supply
-			// a default data payload via `getData` — merged below so an
-			// explicit `param.data` always wins.
+			// concrete target is `spec.menuId`. The registry's optional
+			// `getData(item, ctx)` is invoked with `item = undefined` here
+			// — only ctx-scoped (static) defaults can be derived this way;
+			// row-aware data must travel via the row's own `subMenuData`,
+			// which the row renderer already forwards in `param.data`.
+			// Explicit `param.data` always wins over the registry default.
 			const sub = open.config.subMenus?.[id];
 			if (sub) {
-				const registryData = sub.getData?.(undefined as never, ctx) as unknown;
+				const registryData = sub.getData?.(undefined, ctx);
 				const merged: OpenParam = {
 					...(param as OpenParam | undefined),
 					data: (param as OpenParam | undefined)?.data ?? registryData,

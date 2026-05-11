@@ -187,8 +187,11 @@ export interface ChipRow<TItem = any> extends RowBase<TItem> {
 	/** Trailing chip showing sort direction or a status. */
 	trailing?: {
 		icon: IconParam | ((item: TItem) => IconParam);
+		ariaLabel?: string | ((item: TItem) => string);
 		onClick?: (item: TItem, ctx: MenuCtx) => void;
 	};
+	/** Accessible label for the delete (X) button; receives item for naming. */
+	deleteAriaLabel?: string | ((item: TItem) => string);
 	onClick?: (item: TItem, e: MouseEvent, ctx: MenuCtx) => void;
 	onDelete?: (item: TItem, ctx: MenuCtx) => void;
 }

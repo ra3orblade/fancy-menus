@@ -829,8 +829,7 @@ function QrCodePanel({ spec }: any) {
 	return (
 		<div className="flex flex-col items-center gap-2 px-3 py-3">
 			<div
-				role="img"
-				aria-label={`QR placeholder for ${spec.value}`}
+				role="presentation"
 				className="grid place-items-center rounded-md border border-border bg-foreground/5"
 				style={{ width: size, height: size }}
 			>
@@ -842,6 +841,9 @@ function QrCodePanel({ spec }: any) {
 						/>
 					))}
 				</div>
+			</div>
+			<div className="text-center text-[10px] uppercase tracking-wider text-muted-foreground">
+				Preview only — not scannable
 			</div>
 			<code className="max-w-full break-all text-center text-[10px] text-muted-foreground">{spec.value}</code>
 			{spec.buttons && (

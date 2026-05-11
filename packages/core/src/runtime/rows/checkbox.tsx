@@ -36,13 +36,10 @@ export function CheckboxRowView<TItem>({ item, spec, active, ctx, onActivate, pr
 				</span>
 			)}
 			<span className="fm-row__name">{renderRenderable(s.name, item)}</span>
-			<span
-				role="checkbox"
-				aria-checked={checked}
-				aria-disabled={disabled || undefined}
-				data-checked={checked || undefined}
-				className="fm-checkbox"
-			>
+			{/* Visual-only check badge — the surrounding option already carries
+			    aria-checked, so the badge is aria-hidden to avoid SR
+			    double-announcement of the checked state. */}
+			<span aria-hidden data-checked={checked || undefined} className="fm-checkbox">
 				{checked && <Check weight="bold" />}
 			</span>
 		</div>

@@ -15,6 +15,9 @@ import clsx from 'clsx';
 import type * as React from 'react';
 import { RowKind } from '../../types/enums';
 import type { SortableRow } from '../../types/row';
+import { CheckboxRowView } from './checkbox';
+import { ChipRowView } from './chip';
+import { FilterRuleRowView } from './filterRule';
 import type { RowRenderProps } from './index';
 import { ItemRowView } from './item';
 import { ObjectRowView } from './object';
@@ -36,7 +39,12 @@ export function SortableRowView<TItem>(props: RowRenderProps<TItem>) {
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
-		opacity: isDragging ? 0.4 : 1,
+		// Source-row placeholder while the overlay clone floats. The CSS rule
+		// for `[data-fm-drag-source='true']` paints a dashed accent outline
+		// so the slot is legible against the surrounding rows; we don't fade
+		// the row content too aggressively because the dashed marker is the
+		// primary signal.
+		opacity: isDragging ? 0.55 : 1,
 		zIndex: isDragging ? 10 : undefined,
 		// While being dragged, let the cursor pass through to whatever drop
 		// target is underneath — otherwise dnd-kit's collision detection
@@ -58,8 +66,14 @@ export function SortableRowView<TItem>(props: RowRenderProps<TItem>) {
 				return <ObjectRowView {...(innerProps as any)} />;
 			case RowKind.Switch:
 				return <SwitchRowView {...(innerProps as any)} />;
+			case RowKind.Checkbox:
+				return <CheckboxRowView {...(innerProps as any)} />;
+			case RowKind.Chip:
+				return <ChipRowView {...(innerProps as any)} />;
 			case RowKind.Participant:
 				return <ParticipantRowView {...(innerProps as any)} />;
+			case RowKind.FilterRule:
+				return <FilterRuleRowView {...(innerProps as any)} />;
 			case RowKind.Custom:
 				return <>{(s.inner as any).render(props.item, props.ctx)}</>;
 			default:
@@ -68,7 +82,7 @@ export function SortableRowView<TItem>(props: RowRenderProps<TItem>) {
 	})();
 
 	return (
-		<div ref={setNodeRef} style={style}>
+		<div ref={setNodeRef} style={style} data-fm-drag-source={isDragging || undefined}>
 			{inner}
 		</div>
 	);
