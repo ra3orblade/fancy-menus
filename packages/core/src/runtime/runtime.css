@@ -382,3 +382,62 @@
 	font-weight: 700;
 	line-height: 1;
 }
+
+/* Checkbox row — right-aligned checkbox indicator. */
+.fm-checkbox {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border-radius: 4px;
+	border: 1.5px solid var(--fm-surface-border);
+	margin-left: auto;
+	flex: 0 0 auto;
+	color: var(--fm-accent-fg);
+	background: transparent;
+	transition: background var(--fm-dur-toggle, 120ms) var(--fm-ease-smooth);
+}
+.fm-checkbox[data-checked="true"] {
+	background: var(--fm-accent);
+	border-color: var(--fm-accent);
+}
+.fm-checkbox[aria-disabled="true"] {
+	opacity: var(--fm-row-disabled-opacity, 0.5);
+}
+
+/* Chip row — pill style with optional trailing buttons. */
+.fm-row--chip {
+	min-height: auto;
+	padding: 2px 4px 2px 6px;
+	border-radius: 999px;
+	background: var(--fm-row-hover-bg);
+	border: 1px solid var(--fm-surface-border);
+	display: inline-flex;
+	gap: 4px;
+	font-size: var(--fm-font-size-row);
+}
+.fm-row__chip-trailing,
+.fm-row__chip-delete {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border-radius: 999px;
+	color: var(--fm-muted-fg);
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+}
+.fm-row__chip-trailing:hover,
+.fm-row__chip-delete:hover {
+	background: var(--fm-row-active-bg);
+	color: var(--fm-row-active-fg);
+}
+
+/* FilterRule row — relation icon + condition label + value preview. */
+.fm-row--rule .fm-row__name {
+	flex: 1;
+	min-width: 0;
+}

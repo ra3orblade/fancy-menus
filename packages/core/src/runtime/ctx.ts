@@ -29,7 +29,7 @@ export function makeCtx(
 		}
 	};
 
-	return {
+	const ctx: MenuCtx = {
 		id: open.id,
 		data: open.param.data,
 		storage: {
@@ -43,6 +43,22 @@ export function makeCtx(
 			},
 		},
 		open: async (id, param) => {
+			// Resolve sub-menu registry entry: when this menu declared
+			// `subMenus[id]`, the caller is referencing a local alias whose
+			// concrete target is `spec.menuId`. The registry can also supply
+			// a default data payload via `getData` — merged below so an
+			// explicit `param.data` always wins.
+			const sub = open.config.subMenus?.[id];
+			if (sub) {
+				const registryData = sub.getData?.(undefined as never, ctx) as unknown;
+				const merged: OpenParam = {
+					...(param as OpenParam | undefined),
+					data: (param as OpenParam | undefined)?.data ?? registryData,
+					parentId: open.id,
+				};
+				store.open(sub.menuId, merged);
+				return;
+			}
 			store.open(id, { ...(param as OpenParam | undefined), parentId: open.id });
 		},
 		close: () => store.close(open.id),
@@ -59,4 +75,5 @@ export function makeCtx(
 		updateOther: (id, patch) => store.updateData(id, patch),
 		isOpen: (id) => store.isOpen(id),
 	};
+	return ctx;
 }

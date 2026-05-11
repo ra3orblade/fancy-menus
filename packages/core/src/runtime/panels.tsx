@@ -64,8 +64,23 @@ export function PanelView({ spec, ctx }: PanelProps) {
 			return <BannerPanel spec={spec as any} ctx={ctx} />;
 		case PanelKind.LinkPreview:
 			return <LinkPreviewPanel spec={spec as any} />;
+		case PanelKind.TabBar:
+			return <TabBarPanel spec={spec as any} ctx={ctx} />;
+		case PanelKind.Slider:
+			return <SliderPanel spec={spec as any} ctx={ctx} />;
+		case PanelKind.MarkdownToolbar:
+			return <MarkdownToolbarPanel spec={spec as any} ctx={ctx} />;
+		case PanelKind.CodeEditor:
+			return <CodeEditorPanel spec={spec as any} ctx={ctx} />;
+		case PanelKind.KatexPreview:
+			return <KatexPreviewPanel spec={spec as any} />;
+		case PanelKind.QrCode:
+			return <QrCodePanel spec={spec as any} />;
 		default:
-			return <div className="px-3 py-2 text-xs text-muted-foreground">[{spec.kind} panel not yet rendered]</div>;
+			// Unreachable: PanelView handles every PanelKind. If a new kind
+			// lands in the enum without a renderer, tsc's exhaustive-switch
+			// narrows `spec` to `never` and surfaces it here.
+			return null;
 	}
 }
 
@@ -641,6 +656,209 @@ function LinkPreviewPanel({ spec }: any) {
 				{spec.description && <div className="text-xs text-muted-foreground">{spec.description}</div>}
 				<div className="text-[10px] text-muted-foreground">{spec.url}</div>
 			</div>
+		</div>
+	);
+}
+
+function TabBarPanel({ spec, ctx }: any) {
+	return (
+		<div className="flex items-center justify-between border-b border-border px-1 pt-1">
+			<div className="flex items-center gap-0.5" role="tablist">
+				{spec.tabs.map((t: any) => {
+					const active = t.id === spec.activeId;
+					return (
+						<button
+							key={t.id}
+							type="button"
+							role="tab"
+							aria-selected={active}
+							onClick={() => spec.onChange(t.id, ctx)}
+							className={clsx(
+								'inline-flex items-center gap-1 rounded-t-md px-2 py-1 text-xs font-medium',
+								active ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground'
+							)}
+						>
+							{t.icon && <IconView icon={t.icon} defaultSize={12} />}
+							{t.label}
+						</button>
+					);
+				})}
+			</div>
+			{spec.rightSlot}
+		</div>
+	);
+}
+
+function SliderPanel({ spec, ctx }: any) {
+	// Snaps: when provided, the input snaps to the nearest discrete point on
+	// release. Live value during drag remains continuous so the consumer can
+	// preview without commit-on-every-pixel noise.
+	const snap = (v: number): number => {
+		const snaps = spec.snaps as number[] | undefined;
+		if (!snaps || snaps.length === 0) return v;
+		return snaps.reduce((acc, s) => (Math.abs(s - v) < Math.abs(acc - v) ? s : acc), snaps[0]!);
+	};
+	return (
+		<div className="flex flex-col gap-1.5 px-3 py-2">
+			{(spec.label || spec.showValue) && (
+				<div className="flex items-center justify-between text-xs text-muted-foreground">
+					<span>{renderRenderable(spec.label, undefined as never)}</span>
+					{spec.showValue && <span className="font-mono tabular-nums">{spec.value}</span>}
+				</div>
+			)}
+			<input
+				type="range"
+				min={spec.min}
+				max={spec.max}
+				step={spec.step ?? 1}
+				value={spec.value}
+				onChange={(e) => spec.onChange(Number(e.target.value), ctx)}
+				onPointerUp={(e) => {
+					const next = snap(Number((e.target as HTMLInputElement).value));
+					if (next !== spec.value) spec.onChange(next, ctx);
+				}}
+				className="w-full accent-[color:var(--fm-accent)]"
+				aria-label={typeof spec.label === 'string' ? spec.label : undefined}
+			/>
+		</div>
+	);
+}
+
+function MarkdownToolbarPanel({ spec, ctx }: any) {
+	const active = new Set<string>(spec.activeMarks ?? []);
+	return (
+		<div className="flex items-center gap-0.5 border-b border-border px-1 py-1">
+			{spec.styleSwitcher && (
+				<>
+					<button
+						type="button"
+						onClick={() => spec.styleSwitcher.onClick(ctx)}
+						className="inline-flex h-6 items-center gap-1 rounded-md px-1.5 text-xs text-muted-foreground hover:bg-accent"
+						aria-label={`Style: ${spec.styleSwitcher.activeStyle}`}
+					>
+						<IconView icon={spec.styleSwitcher.icon} defaultSize={12} />
+						<span className="font-medium">{spec.styleSwitcher.activeStyle}</span>
+					</button>
+					<span className="mx-0.5 h-4 w-px bg-border" aria-hidden />
+				</>
+			)}
+			{spec.buttons.map((b: any) => {
+				const isActive = b.mark ? active.has(b.mark) : false;
+				return (
+					<button
+						key={b.id}
+						type="button"
+						onClick={() => b.onClick(ctx)}
+						aria-pressed={isActive || undefined}
+						title={typeof b.tooltip?.text === 'string' ? b.tooltip.text : undefined}
+						className={clsx(
+							'inline-flex size-6 items-center justify-center rounded-md hover:bg-accent',
+							isActive ? 'bg-accent text-foreground' : 'text-muted-foreground'
+						)}
+					>
+						<IconView icon={b.icon} defaultSize={14} />
+					</button>
+				);
+			})}
+		</div>
+	);
+}
+
+function CodeEditorPanel({ spec, ctx }: any) {
+	// Lightweight textarea — consumers who want a real syntax-highlighted
+	// editor (monaco / codemirror) can swap in a `kind: Custom` panel and
+	// keep the rest of the menu schema unchanged.
+	const ctxRef = useRef(ctx);
+	ctxRef.current = ctx;
+	const minRows = spec.minRows ?? 4;
+	const maxRows = spec.maxRows ?? 16;
+	const lines = Math.min(maxRows, Math.max(minRows, (spec.value?.split('\n').length ?? 0) || minRows));
+	return (
+		<div className="px-2 py-2">
+			{spec.language && (
+				<div className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">{spec.language}</div>
+			)}
+			<textarea
+				value={spec.value ?? ''}
+				placeholder={spec.placeholder}
+				rows={lines}
+				spellCheck={false}
+				onChange={(e) => spec.onChange(e.target.value, ctxRef.current)}
+				onKeyDown={(e) => {
+					if (spec.onSave && (e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+						e.preventDefault();
+						spec.onSave?.((e.target as HTMLTextAreaElement).value, ctxRef.current);
+					}
+				}}
+				className="w-full resize-none rounded-md border border-border bg-transparent p-2 font-mono text-xs leading-relaxed outline-none"
+			/>
+		</div>
+	);
+}
+
+function KatexPreviewPanel({ spec }: any) {
+	// Render the raw TeX as a styled code block. Real KaTeX rendering would
+	// pull in a ~280KB dep — consumers who need it can swap to a Custom panel
+	// and call katex.renderToString themselves.
+	const displayMode = spec.displayMode ?? true;
+	return (
+		<div className="px-3 py-2">
+			<div
+				className={clsx(
+					'rounded-md border border-border bg-muted/30 px-3 py-2 font-mono text-xs',
+					displayMode ? 'text-center' : 'inline-block'
+				)}
+				aria-label="LaTeX expression"
+			>
+				{spec.expression}
+			</div>
+			{spec.caption && <div className="mt-1 text-[10px] text-muted-foreground">{spec.caption}</div>}
+		</div>
+	);
+}
+
+function QrCodePanel({ spec }: any) {
+	// Placeholder square — encodes only the value's character count visually
+	// (4-bit checksum sample). Consumers who need a scannable QR can swap to
+	// a Custom panel and use `qrcode.react` or similar.
+	const size = spec.size ?? 128;
+	const checksum = Array.from(spec.value as string)
+		.reduce((acc, ch) => (acc + ch.charCodeAt(0)) % 4096, 0)
+		.toString(2)
+		.padStart(12, '0');
+	return (
+		<div className="flex flex-col items-center gap-2 px-3 py-3">
+			<div
+				role="img"
+				aria-label={`QR placeholder for ${spec.value}`}
+				className="grid place-items-center rounded-md border border-border bg-foreground/5"
+				style={{ width: size, height: size }}
+			>
+				<div className="grid grid-cols-6 gap-px font-mono text-[8px] text-muted-foreground">
+					{checksum.split('').map((b, i) => (
+						<span
+							key={i}
+							className={clsx('size-3 rounded-sm', b === '1' ? 'bg-foreground' : 'bg-transparent')}
+						/>
+					))}
+				</div>
+			</div>
+			<code className="max-w-full break-all text-center text-[10px] text-muted-foreground">{spec.value}</code>
+			{spec.buttons && (
+				<div className="flex items-center gap-1">
+					{spec.buttons.map((b: any) => (
+						<button
+							key={b.id}
+							type="button"
+							onClick={b.onClick}
+							className="inline-flex h-6 items-center rounded-md border border-border px-2 text-[11px] text-muted-foreground hover:bg-accent"
+						>
+							{b.icon && <IconView icon={b.icon} defaultSize={10} />}
+							{b.label}
+						</button>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

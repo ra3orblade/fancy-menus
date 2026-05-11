@@ -8,12 +8,16 @@ import type { MenuCtx } from '../../types/context';
 import { RowKind } from '../../types/enums';
 import type { RowSpec } from '../../types/row';
 import { AddRowView } from './add';
+import { CheckboxRowView } from './checkbox';
+import { ChipRowView } from './chip';
 import { ColorRowView } from './color';
 import { DividerRowView } from './divider';
+import { FilterRuleRowView } from './filterRule';
 import { ItemRowView } from './item';
 import { ObjectRowView } from './object';
 import { ParticipantRowView } from './participant';
 import { SectionRowView } from './section';
+import { SelectNavRowView } from './selectNav';
 import { SortableRowView } from './sortable';
 import { SwitchRowView } from './switch';
 
@@ -51,6 +55,10 @@ export function renderRow(props: RowRenderProps): ReactNode {
 			return <DividerRowView {...(props as any)} />;
 		case RowKind.Switch:
 			return <SwitchRowView {...(props as any)} />;
+		case RowKind.Checkbox:
+			return <CheckboxRowView {...(props as any)} />;
+		case RowKind.SelectNav:
+			return <SelectNavRowView {...(props as any)} />;
 		case RowKind.Color:
 			return <ColorRowView {...(props as any)} />;
 		case RowKind.Add:
@@ -61,6 +69,10 @@ export function renderRow(props: RowRenderProps): ReactNode {
 			return <ParticipantRowView {...(props as any)} />;
 		case RowKind.Sortable:
 			return <SortableRowView {...(props as any)} />;
+		case RowKind.Chip:
+			return <ChipRowView {...(props as any)} />;
+		case RowKind.FilterRule:
+			return <FilterRuleRowView {...(props as any)} />;
 		case RowKind.Custom:
 			return (props.spec as any).render(props.item, props.ctx);
 		default:
