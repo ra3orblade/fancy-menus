@@ -30,10 +30,16 @@ export function ItemRowView<TItem>({ item, spec, active, ctx, onActivate, prefix
 	const spawnSubMenu = () => {
 		if (!subMenuId || disabled || readonly) return;
 		const data = s.subMenuData ? s.subMenuData(item, ctx) : ctx.data;
+		// A row that just got recycled by the virtualizer (or hasn't laid
+		// out yet) can return a zero-area rect — skip the rect in that case
+		// so positioning measures off the live element on the next paint
+		// instead of anchoring to (0,0).
+		const rect = rowRef.current?.getBoundingClientRect();
+		const triggerRect = rect && rect.width > 0 && rect.height > 0 ? rect : undefined;
 		void ctx.open(subMenuId, {
 			element: rowRef.current ?? undefined,
 			data,
-			triggerRect: rowRef.current?.getBoundingClientRect(),
+			triggerRect,
 		});
 	};
 

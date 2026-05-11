@@ -127,7 +127,11 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 				const subId = typeof spec.subMenuId === 'function' ? spec.subMenuId(item) : spec.subMenuId;
 				if (!subId) return false;
 				const rowEl = scrollerRef.current?.querySelector(`[data-index="${i}"] [data-submenu-id]`);
-				const triggerRect = (rowEl as HTMLElement | null)?.getBoundingClientRect();
+				// Off-viewport (virtualized-away) rows can return zero-area
+				// rects after a fast keyboard hop; drop the rect in that case
+				// so the position pipeline measures off the live element.
+				const rect = (rowEl as HTMLElement | null)?.getBoundingClientRect();
+				const triggerRect = rect && rect.width > 0 && rect.height > 0 ? rect : undefined;
 				const data = spec.subMenuData ? spec.subMenuData(item, ctx) : ctx.data;
 				void ctx.open(subId, { element: rowEl ?? undefined, data, triggerRect });
 				return true;
