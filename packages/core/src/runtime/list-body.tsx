@@ -243,7 +243,7 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 	// row dispatcher.
 	if (body.orientation === Orientation.Horizontal) {
 		return (
-			<div tabIndex={0} className="fm-list fm-list--horizontal" role="listbox">
+			<div tabIndex={0} className="fm-list fm-list--horizontal" role="listbox" aria-orientation="horizontal">
 				{items.map((item: any, idx: number) => {
 					const spec = pickSpec(body.rows, item);
 					if (!spec) return null;
@@ -268,7 +268,7 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 	}
 
 	const list = (
-		<div ref={scrollerRef} tabIndex={0} className="fm-list" role="listbox">
+		<div ref={scrollerRef} tabIndex={0} className="fm-list" role="listbox" aria-orientation="vertical">
 			<div style={{ height: virtualizer.getTotalSize(), position: 'relative', width: '100%' }}>
 				{virtualizer.getVirtualItems().map((vi) => {
 					const item = items[vi.index];

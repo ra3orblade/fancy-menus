@@ -188,6 +188,8 @@ the trigger inside the viewport.
 | `title`        | `string \| () => string`          | title bar |
 | `withBack`     | `boolean`                         | back arrow + `onBack` |
 | `withClose`    | `boolean`                         | close X in the title |
+| `ariaLabel`    | `string`                          | accessible name fallback when `title` is a function or absent |
+| `role`         | `'dialog' \| 'menu' \| 'listbox'` | ARIA role for the shell (default `dialog`) |
 | `filter`       | [`FilterConfig`](#filterconfig)   | search input in the chrome |
 | `tabs`         | [`TabsConfig`](#tabsconfig)       | tab strip; each tab owns its body |
 | `dimmer`       | `DimmerMode`                      | `Default`, `None`, `PassThrough`, `Visible` |
