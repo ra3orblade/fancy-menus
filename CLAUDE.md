@@ -187,13 +187,15 @@ Both smoke scripts auto-detect the dev URL when `URL` env is unset (default
 
 ## Open work
 
-- `7` — Storybook setup (one story per example config)
 - More row kinds wired to the runtime: `chip`, `selectNav`, `filterRule`,
 	`checkbox`
 - Sub-menu spawning lifecycle (the `subMenus` registry exists but the
 	runtime currently treats children as plain `useMenu().open()` calls)
-- Drag-and-drop for `SortableRow` (dnd-kit; visual handle is in place)
 - Richer panels: `codeEditor`, `katexPreview`, `qrCode`, `slider`,
 	`markdownToolbar`, `tabBar` (as a panel, not just chrome)
 - IconRegistry resolution in `IconView` (string-name icons currently
 	render the literal string)
+
+Storybook is **not** on the roadmap — the playground sidebar already
+provides per-example previews + live data, and adding Storybook on top
+would duplicate that surface without earning new coverage.

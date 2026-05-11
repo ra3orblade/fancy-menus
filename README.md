@@ -403,7 +403,6 @@ bun scripts/interact.mjs
   `markdownToolbar`, `tabBar` (as a panel, not just chrome)
 - IconRegistry resolution in `IconView` (string-name icons currently render
   the literal string)
-- Storybook setup + visual regression
 - More complex example menus (replace-paged settings wizard, cascading
   context menu with hover-spawned sub-menus, share-flow)
 
