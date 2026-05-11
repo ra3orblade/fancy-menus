@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 
-const URL = process.env.URL ?? 'http://localhost:5174';
+const URL = process.env.URL ?? 'http://localhost:5180';
 const browser = await puppeteer.launch({ headless: 'new' });
 const page = await browser.newPage();
 const errors = [];

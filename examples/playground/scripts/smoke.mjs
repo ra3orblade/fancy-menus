@@ -8,7 +8,7 @@
 
 import puppeteer from 'puppeteer';
 
-const URL = process.env.URL ?? 'http://localhost:5174';
+const URL = process.env.URL ?? 'http://localhost:5180';
 // id → expected selector(s) inside the dialog. At least one must be present.
 const EXAMPLES = [
 	{ id: 'commandPalette', expect: '.fm-list [role="option"]' },

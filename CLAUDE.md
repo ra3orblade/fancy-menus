@@ -158,7 +158,7 @@ cd examples/playground && bun run build
 ```
 
 Both smoke scripts auto-detect the dev URL when `URL` env is unset (default
-`http://localhost:5174`).
+`http://localhost:5180`).
 
 ## Adding a new menu example
 

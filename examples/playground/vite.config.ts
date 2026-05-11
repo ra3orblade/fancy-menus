@@ -12,9 +12,10 @@ export default defineConfig({
 	},
 	server: {
 		// Fixed port + strictPort — Vite errors out instead of silently
-		// drifting to 5174/5175 when 5173 is already taken, so dev URLs
-		// stay stable across reloads.
-		port: 5173,
+		// drifting when the port is taken, so dev URLs stay stable across
+		// reloads. 5180 is chosen to dodge the busy 5173/5174 range that
+		// most other Vite / electron-vite projects occupy by default.
+		port: 5180,
 		strictPort: true,
 		open: true,
 	},
