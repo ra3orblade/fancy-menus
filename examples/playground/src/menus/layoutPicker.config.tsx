@@ -17,7 +17,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { Calendar, Columns, Grid3x3, KanbanSquare, LayoutGrid, List, Network, Rows } from 'lucide-react';
+import { Calendar, Columns, GridFour, Kanban, List, Network, Rows, SquaresFour } from '@phosphor-icons/react';
 
 interface LayoutOption {
 	id: string;
@@ -27,9 +27,9 @@ interface LayoutOption {
 
 const LAYOUTS: LayoutOption[] = [
 	{ id: 'list', label: 'List', icon: List },
-	{ id: 'grid', label: 'Grid', icon: Grid3x3 },
-	{ id: 'gallery', label: 'Gallery', icon: LayoutGrid },
-	{ id: 'board', label: 'Board', icon: KanbanSquare },
+	{ id: 'grid', label: 'Grid', icon: SquaresFour },
+	{ id: 'gallery', label: 'Gallery', icon: GridFour },
+	{ id: 'board', label: 'Board', icon: Kanban },
 	{ id: 'calendar', label: 'Calendar', icon: Calendar },
 	{ id: 'graph', label: 'Graph', icon: Network },
 	{ id: 'columns', label: 'Columns', icon: Columns },

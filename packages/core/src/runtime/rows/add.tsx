@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus } from '@phosphor-icons/react';
 import type { AddRow } from '../../types/row';
 import { IconView } from './icon';
 import type { RowRenderProps } from './index';

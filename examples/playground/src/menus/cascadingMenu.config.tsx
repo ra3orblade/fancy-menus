@@ -11,21 +11,21 @@
 
 import { BodyKind, DimmerMode, Horizontal, RowKind, SourceKind, Vertical, defineMenu } from '@fancy-menus/core';
 import {
-	ArrowDownToLine,
-	ArrowUpToLine,
-	Bold,
+	ArrowLineDown,
+	ArrowLineUp,
+	ArrowRight,
 	Code,
 	Copy,
-	FileDown,
-	Italic,
-	MoveRight,
+	FileArrowDown,
 	Scissors,
-	Share2,
+	Share,
 	Star,
-	Trash2,
-	Type,
-	Underline,
-} from 'lucide-react';
+	TextB,
+	TextItalic,
+	TextT,
+	TextUnderline,
+	Trash,
+} from '@phosphor-icons/react';
 
 interface MenuItemSpec {
 	id: string;
@@ -41,11 +41,11 @@ const ROOT_ITEMS: MenuItemSpec[] = [
 	{ id: 'cut', name: 'Cut', icon: Scissors, caption: '⌘X' },
 	{ id: 'copy', name: 'Copy', icon: Copy, caption: '⌘C' },
 	{ id: 'star', name: 'Star', icon: Star, caption: '⌘D' },
-	{ id: 'format', name: 'Format', icon: Type, subMenuId: 'cascadingFormat' },
-	{ id: 'moveTo', name: 'Move to', icon: MoveRight, subMenuId: 'cascadingMoveTo' },
-	{ id: 'export', name: 'Export as', icon: FileDown, subMenuId: 'cascadingExport' },
-	{ id: 'share', name: 'Share', icon: Share2 },
-	{ id: 'delete', name: 'Delete', icon: Trash2, caption: '⌫', destructive: true },
+	{ id: 'format', name: 'Format', icon: TextT, subMenuId: 'cascadingFormat' },
+	{ id: 'moveTo', name: 'Move to', icon: ArrowRight, subMenuId: 'cascadingMoveTo' },
+	{ id: 'export', name: 'Export as', icon: FileArrowDown, subMenuId: 'cascadingExport' },
+	{ id: 'share', name: 'Share', icon: Share },
+	{ id: 'delete', name: 'Delete', icon: Trash, caption: '⌫', destructive: true },
 ];
 
 interface CascadingData {
@@ -88,11 +88,11 @@ export const cascadingMenu = defineMenu<CascadingData, void, MenuItemSpec>({
 
 // ─── Sub-menu: Format ────────────────────────────────────────────────────
 const FORMAT_ITEMS: MenuItemSpec[] = [
-	{ id: 'bold', name: 'Bold', icon: Bold, caption: '⌘B' },
-	{ id: 'italic', name: 'Italic', icon: Italic, caption: '⌘I' },
-	{ id: 'underline', name: 'Underline', icon: Underline, caption: '⌘U' },
+	{ id: 'bold', name: 'Bold', icon: TextB, caption: '⌘B' },
+	{ id: 'italic', name: 'Italic', icon: TextItalic, caption: '⌘I' },
+	{ id: 'underline', name: 'Underline', icon: TextUnderline, caption: '⌘U' },
 	{ id: 'code', name: 'Code', icon: Code, caption: '⌘E' },
-	{ id: 'textStyle', name: 'Text style', icon: Type, subMenuId: 'cascadingTextStyle' },
+	{ id: 'textStyle', name: 'Text style', icon: TextT, subMenuId: 'cascadingTextStyle' },
 ];
 
 export const cascadingFormat = defineMenu<CascadingData, void, MenuItemSpec>({
@@ -183,11 +183,11 @@ export const cascadingMoveTo = defineMenu<CascadingData, void, MenuItemSpec>({
 
 // ─── Sub-menu: Export ────────────────────────────────────────────────────
 const EXPORT_FORMATS: MenuItemSpec[] = [
-	{ id: 'pdf', name: 'PDF', icon: ArrowDownToLine },
-	{ id: 'markdown', name: 'Markdown', icon: ArrowDownToLine },
-	{ id: 'html', name: 'HTML', icon: ArrowDownToLine },
-	{ id: 'image', name: 'Image', icon: ArrowDownToLine },
-	{ id: 'plain', name: 'Plain text', icon: ArrowUpToLine },
+	{ id: 'pdf', name: 'PDF', icon: ArrowLineDown },
+	{ id: 'markdown', name: 'Markdown', icon: ArrowLineDown },
+	{ id: 'html', name: 'HTML', icon: ArrowLineDown },
+	{ id: 'image', name: 'Image', icon: ArrowLineDown },
+	{ id: 'plain', name: 'Plain text', icon: ArrowLineUp },
 ];
 
 export const cascadingExport = defineMenu<CascadingData, void, MenuItemSpec>({

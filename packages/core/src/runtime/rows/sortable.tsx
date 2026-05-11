@@ -10,8 +10,8 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { DotsSixVertical } from '@phosphor-icons/react';
 import clsx from 'clsx';
-import { GripVertical } from 'lucide-react';
 import type * as React from 'react';
 import { RowKind } from '../../types/enums';
 import type { SortableRow } from '../../types/row';
@@ -110,7 +110,7 @@ function DragHandle({
 			)}
 			data-fm-drag-handle
 		>
-			<GripVertical className="size-3.5" />
+			<DotsSixVertical className="size-3.5" />
 		</span>
 	);
 }

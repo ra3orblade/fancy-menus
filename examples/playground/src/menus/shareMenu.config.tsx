@@ -19,7 +19,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { Check, Copy, Globe, Link2, Lock, Users } from 'lucide-react';
+import { Copy, LinkSimple } from '@phosphor-icons/react';
 
 interface ShareMenuData {
 	url: string;
@@ -52,7 +52,7 @@ export const shareMenu = defineMenu<ShareMenuData, void>({
 			{
 				id: 'banner',
 				kind: PanelKind.Banner,
-				icon: { icon: Link2, size: 16 },
+				icon: { icon: LinkSimple, size: 16 },
 				title: 'Anyone with the link can view',
 				message: 'Update access below to change who sees this.',
 				variant: 'info' as any,

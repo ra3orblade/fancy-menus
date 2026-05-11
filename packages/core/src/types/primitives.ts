@@ -9,25 +9,33 @@ import type { ButtonColor, ButtonSize, TooltipAxisX, TooltipAxisY } from './enum
 export type Renderable<TItem = void> = ReactNode | (TItem extends void ? () => ReactNode : (item: TItem) => ReactNode);
 
 /**
- * Lucide-compatible icon component. Accepts a `LucideIcon` import directly
- * (e.g. `import { Search } from 'lucide-react'`) — any component matching this
- * shape works, including custom SVG icons.
+ * Phosphor-compatible icon component (https://phosphoricons.com). Accepts a
+ * `PhosphorIcon` import directly (e.g. `import { Star } from '@phosphor-icons/react'`)
+ * — any component matching this shape works, including custom SVG icons.
+ *
+ * Plain string names are *not* accepted anywhere icons are used. Strings
+ * can't carry per-instance styling intent (size, color, weight) and would
+ * force a hidden registry indirection. Pass the component directly, or
+ * wrap it in an `IconParam` spec when you need to override style.
  */
 export type IconComponent = ComponentType<
-	SVGProps<SVGSVGElement> & { size?: number | string; absoluteStrokeWidth?: boolean }
+	SVGProps<SVGSVGElement> & {
+		size?: number | string;
+		weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
+		mirrored?: boolean;
+	}
 >;
 
 /**
- * Icon specification — pass a Lucide icon (or any component matching
- * IconComponent), or a string name resolved through a user-supplied registry
- * mounted on the MenuProvider (`iconRegistry`).
+ * Icon specification — either a bare phosphor icon component, or an
+ * object that wraps the component with display overrides.
  */
 export interface IconParam {
-	/** Either a Lucide icon component or a registry-resolved name. */
-	icon: IconComponent | string;
+	/** Phosphor icon component (or any component matching IconComponent). */
+	icon: IconComponent;
 	color?: string;
 	size?: number;
-	strokeWidth?: number;
+	weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
 	className?: string;
 	/** Forwarded to the underlying svg / wrapper. */
 	'aria-label'?: string;

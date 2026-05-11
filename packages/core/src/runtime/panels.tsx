@@ -6,8 +6,17 @@
  * incrementally; for now those kinds emit a clean placeholder.
  */
 
+import {
+	CaretLeft,
+	CaretRight,
+	CircleNotch,
+	MagnifyingGlass,
+	Plus,
+	Upload,
+	WarningCircle,
+	X,
+} from '@phosphor-icons/react';
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, CircleAlert, Loader2, Plus, Search, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MenuCtx } from '../types/context';
 import { PanelKind } from '../types/enums';
@@ -82,7 +91,7 @@ function SearchInputPanel({ spec, ctx }: any) {
 	return (
 		<div className="flex items-center gap-2 border-b border-border px-3 py-2">
 			<span className="text-muted-foreground">
-				{spec.icon ? <IconView icon={spec.icon} defaultSize={14} /> : <Search className="size-3.5" />}
+				{spec.icon ? <IconView icon={spec.icon} defaultSize={14} /> : <MagnifyingGlass className="size-3.5" />}
 			</span>
 			<input
 				value={value}
@@ -269,7 +278,7 @@ function MonthGridPanel({ spec, ctx }: any) {
 				className="rounded-md p-1 text-[color:var(--fm-muted-fg)] hover:bg-[color:var(--fm-row-hover-bg)]"
 				aria-label="Previous"
 			>
-				<ChevronLeft className="size-4" />
+				<CaretLeft className="size-4" />
 			</button>
 			<div className="flex flex-1 items-center justify-center gap-1">
 				<button
@@ -299,7 +308,7 @@ function MonthGridPanel({ spec, ctx }: any) {
 				className="rounded-md p-1 text-[color:var(--fm-muted-fg)] hover:bg-[color:var(--fm-row-hover-bg)]"
 				aria-label="Next"
 			>
-				<ChevronRight className="size-4" />
+				<CaretRight className="size-4" />
 			</button>
 		</header>
 	);
@@ -576,7 +585,7 @@ function EmptyStatePanel({ spec }: any) {
 function LoaderPanel({ spec }: any) {
 	return (
 		<div className="flex items-center justify-center gap-2 px-3 py-3 text-xs text-muted-foreground">
-			<Loader2 className="size-3.5 animate-spin" />
+			<CircleNotch className="size-3.5 animate-spin" />
 			{spec.message ? renderRenderable(spec.message, undefined as never) : 'Loading…'}
 		</div>
 	);
@@ -585,7 +594,7 @@ function LoaderPanel({ spec }: any) {
 function ErrorPanel({ spec, ctx }: any) {
 	return (
 		<div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
-			<CircleAlert className="size-3.5 shrink-0" />
+			<WarningCircle className="size-3.5 shrink-0" />
 			<div className="flex-1">{renderRenderable(spec.message, undefined as never)}</div>
 			{spec.retry && (
 				<button

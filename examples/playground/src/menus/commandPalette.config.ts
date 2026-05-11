@@ -22,17 +22,17 @@ import {
 } from '@fancy-menus/core';
 import {
 	ArrowRight,
+	ClockCounterClockwise,
 	FileText,
 	FolderOpen,
+	Gear,
 	GitBranch,
-	History,
 	Keyboard,
-	LayoutDashboard,
-	Search,
-	Settings,
+	MagnifyingGlass,
+	SquaresFour,
 	Sun,
-	Trash2,
-} from 'lucide-react';
+	Trash,
+} from '@phosphor-icons/react';
 
 interface CommandItem {
 	id: string;
@@ -52,19 +52,19 @@ const COMMANDS: CommandItem[] = [
 	{ id: 'new-file', name: 'New File', icon: FileText, shortcut: '⌘N', group: 'actions' },
 	{ id: 'new-folder', name: 'New Folder', icon: FolderOpen, shortcut: '⌘⇧N', group: 'actions' },
 	{ id: 'toggle-theme', name: 'Toggle theme', icon: Sun, shortcut: '⌘⇧L', group: 'actions' },
-	{ id: 'clear-cache', name: 'Clear cache', icon: Trash2, shortcut: '', group: 'actions' },
+	{ id: 'clear-cache', name: 'Clear cache', icon: Trash, shortcut: '', group: 'actions' },
 
 	{ id: 'nav', name: 'Navigation', isSection: true },
 	{
 		id: 'go-dashboard',
 		name: 'Go to Dashboard',
-		icon: LayoutDashboard,
+		icon: SquaresFour,
 		shortcut: '⌘1',
 		group: 'nav',
 	},
 	{ id: 'go-branches', name: 'Go to Branches', icon: GitBranch, shortcut: '⌘2', group: 'nav' },
-	{ id: 'go-history', name: 'Go to History', icon: History, shortcut: '⌘3', group: 'nav' },
-	{ id: 'go-settings', name: 'Go to Settings', icon: Settings, shortcut: '⌘,', group: 'nav' },
+	{ id: 'go-history', name: 'Go to History', icon: ClockCounterClockwise, shortcut: '⌘3', group: 'nav' },
+	{ id: 'go-settings', name: 'Go to Settings', icon: Gear, shortcut: '⌘,', group: 'nav' },
 	{ id: 'go-shortcuts', name: 'Keyboard shortcuts', icon: Keyboard, shortcut: '⌘/', group: 'nav' },
 ];
 
@@ -75,7 +75,7 @@ export const commandPalette = defineMenu<{ recents: string[] }, string, CommandI
 	chrome: {
 		filter: {
 			placeholder: 'Type a command or search…',
-			icon: { icon: Search, size: 16 },
+			icon: { icon: MagnifyingGlass, size: 16 },
 			focusOnMount: true,
 			debounceMs: 100,
 			showWhen: FilterShowWhen.Always,
@@ -106,7 +106,7 @@ export const commandPalette = defineMenu<{ recents: string[] }, string, CommandI
 		virtualized: { rowHeight: (it) => (it.isSection ? 28 : 36) },
 		emptyState: {
 			kind: PanelKind.EmptyState,
-			icon: { icon: Search, size: 24 },
+			icon: { icon: MagnifyingGlass, size: 24 },
 			title: 'No matches',
 			message: 'Try a different search term.',
 		},

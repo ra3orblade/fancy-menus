@@ -19,7 +19,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { Bold, Code, Italic, Link, Palette, Strikethrough, Underline } from 'lucide-react';
+import { Code, Link, Palette, TextB, TextItalic, TextStrikethrough, TextUnderline } from '@phosphor-icons/react';
 
 interface FormatItem {
 	id: string;
@@ -37,10 +37,10 @@ interface TextFormatterData {
 }
 
 const ACTIONS: ReadonlyArray<Omit<FormatItem, 'active'>> = [
-	{ id: 'bold', icon: Bold, label: 'Bold', shortcut: '⌘B' },
-	{ id: 'italic', icon: Italic, label: 'Italic', shortcut: '⌘I' },
-	{ id: 'underline', icon: Underline, label: 'Underline', shortcut: '⌘U' },
-	{ id: 'strikethrough', icon: Strikethrough, label: 'Strikethrough', shortcut: '⌘⇧X' },
+	{ id: 'bold', icon: TextB, label: 'Bold', shortcut: '⌘B' },
+	{ id: 'italic', icon: TextItalic, label: 'Italic', shortcut: '⌘I' },
+	{ id: 'underline', icon: TextUnderline, label: 'Underline', shortcut: '⌘U' },
+	{ id: 'strikethrough', icon: TextStrikethrough, label: 'Strikethrough', shortcut: '⌘⇧X' },
 	{ id: 'code', icon: Code, label: 'Code', shortcut: '⌘E' },
 	{ id: 'link', icon: Link, label: 'Link', shortcut: '⌘K' },
 	{ id: 'color', icon: Palette, label: 'Color' },

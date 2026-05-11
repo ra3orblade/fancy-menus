@@ -1,5 +1,5 @@
+import { CaretRight, DotsThree } from '@phosphor-icons/react';
 import clsx from 'clsx';
-import { ChevronRight, MoreHorizontal } from 'lucide-react';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef } from 'react';
 import { SubMenuTrigger } from '../../types/enums';
 import type { ItemRow } from '../../types/row';
@@ -128,10 +128,10 @@ export function ItemRowView<TItem>({ item, spec, active, ctx, onActivate, prefix
 							}}
 							className="inline-flex size-6 items-center justify-center rounded-md text-[color:var(--fm-muted-fg)] hover:bg-[color:var(--fm-row-hover-bg)]"
 						>
-							<MoreHorizontal className="size-4" />
+							<DotsThree className="size-4" />
 						</button>
 					)}
-					{arrow && <ChevronRight className="size-4 text-[color:var(--fm-muted-fg)]" />}
+					{arrow && <CaretRight className="size-4 text-[color:var(--fm-muted-fg)]" />}
 				</span>
 			)}
 		</div>

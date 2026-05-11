@@ -20,7 +20,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { Bell, Keyboard, Palette, Shield, User } from 'lucide-react';
+import { Bell, Keyboard, Palette, Shield, User } from '@phosphor-icons/react';
 
 interface SettingsCategory {
 	id: string;

@@ -1,5 +1,5 @@
+import { DotsThree } from '@phosphor-icons/react';
 import clsx from 'clsx';
-import { MoreHorizontal } from 'lucide-react';
 import type { ObjectRow } from '../../types/row';
 import type { RowRenderProps } from './index';
 import { evalProp, renderRenderable } from './util';
@@ -46,7 +46,7 @@ export function ObjectRowView<TItem>({ item, spec, active, ctx, onActivate, pref
 					aria-label="More"
 					className="inline-flex size-6 items-center justify-center rounded-md text-[color:var(--fm-muted-fg)] hover:bg-[color:var(--fm-row-hover-bg)]"
 				>
-					<MoreHorizontal className="size-4" />
+					<DotsThree className="size-4" />
 				</button>
 			)}
 		</div>

@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react';
+import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import type { FilterConfig } from '../types/chrome';
 import { IconView } from './rows/icon';
@@ -33,7 +33,11 @@ export function FilterInput({ config, onChange }: Props) {
 	return (
 		<div className="fm-filter flex items-center gap-2 border-b border-border px-3 py-2">
 			<span className="text-muted-foreground">
-				{config.icon ? <IconView icon={config.icon} defaultSize={14} /> : <Search className="size-3.5" />}
+				{config.icon ? (
+					<IconView icon={config.icon} defaultSize={14} />
+				) : (
+					<MagnifyingGlass className="size-3.5" />
+				)}
 			</span>
 			<input
 				ref={inputRef}

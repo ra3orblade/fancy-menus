@@ -1,5 +1,5 @@
+import { Check } from '@phosphor-icons/react';
 import clsx from 'clsx';
-import { Check } from 'lucide-react';
 import { ColorScope } from '../../types/enums';
 import type { ColorSwatchRow } from '../../types/row';
 import type { RowRenderProps } from './index';

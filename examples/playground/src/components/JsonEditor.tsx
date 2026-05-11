@@ -11,7 +11,7 @@
  */
 
 import type { MenuEdits } from '@/lib/edit';
-import { CircleAlert } from 'lucide-react';
+import { WarningCircle } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 
 interface JsonEditorProps {
@@ -58,7 +58,7 @@ export function JsonEditor({ value, onChange }: JsonEditorProps) {
 			/>
 			{error && (
 				<div className="flex items-start gap-2 border-t border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-					<CircleAlert className="size-3.5 shrink-0" />
+					<WarningCircle className="size-3.5 shrink-0" />
 					<span className="font-mono">{error}</span>
 				</div>
 			)}

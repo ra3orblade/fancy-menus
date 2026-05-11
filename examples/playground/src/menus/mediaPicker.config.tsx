@@ -21,7 +21,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { Image as ImageIcon, Link, Upload } from 'lucide-react';
+import { Image as ImageIcon, Link, Upload } from '@phosphor-icons/react';
 
 interface ImagePickerData {
 	onSelectUrl: (url: string) => void;

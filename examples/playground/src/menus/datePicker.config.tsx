@@ -8,7 +8,7 @@
  */
 
 import { BodyKind, DimmerMode, Horizontal, type MenuCtx, PanelKind, Vertical, defineMenu } from '@fancy-menus/core';
-import { CalendarDays } from 'lucide-react';
+import { CalendarBlank } from '@phosphor-icons/react';
 
 interface DatePickerData {
 	initial?: number;
@@ -62,7 +62,7 @@ export const datePicker = defineMenu<DatePickerData, number>({
 								ctx.close();
 							}}
 						>
-							<CalendarDays className="size-3.5" />
+							<CalendarBlank className="size-3.5" />
 							Today
 						</button>
 						{ctx.data.canClear && (

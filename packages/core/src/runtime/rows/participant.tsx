@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check } from '@phosphor-icons/react';
 import type { ParticipantRow } from '../../types/row';
 import type { RowRenderProps } from './index';
 import { renderRenderable } from './util';

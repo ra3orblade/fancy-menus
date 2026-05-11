@@ -27,9 +27,9 @@
 		"@dnd-kit/sortable": "^10.0.0",
 		"@dnd-kit/utilities": "^3.2.2",
 		"@floating-ui/react-dom": "^2.1.2",
+		"@phosphor-icons/react": "^2",
 		"@tanstack/react-virtual": "^3.10.8",
-		"clsx": "^2.1.1",
-		"lucide-react": "^0.456.0"
+		"clsx": "^2.1.1"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.12",

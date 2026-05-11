@@ -4,8 +4,8 @@
  * menu centers on the viewport.
  */
 
+import { ArrowDown, ArrowLeft, ArrowUp, MagnifyingGlass, X } from '@phosphor-icons/react';
 import clsx from 'clsx';
-import { ArrowDown, ArrowLeft, ArrowUp, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { DimmerMode, FooterKind, HeaderKind, MenuState, PositionStrategy } from '../types/enums';
@@ -338,7 +338,7 @@ function SearchBarHeader({
 }) {
 	return (
 		<header className="flex items-center gap-2 border-b border-border px-3 py-2">
-			<Search className="size-3.5 text-muted-foreground" />
+			<MagnifyingGlass className="size-3.5 text-muted-foreground" />
 			<input
 				value={value}
 				onChange={(e) => onChange(e.target.value)}

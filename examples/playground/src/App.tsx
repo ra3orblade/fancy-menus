@@ -9,7 +9,7 @@ import { type MenuEdits, applyEdits, editsFromConfig } from '@/lib/edit';
 import { cn } from '@/lib/utils';
 import { useMenu, useStore } from '@fancy-menus/core';
 import type { MenuConfig } from '@fancy-menus/core';
-import { ChevronRight, Code2, FileJson, Github, ScrollText, Settings2, Sparkles } from 'lucide-react';
+import { CaretRight, CodeSimple, FileCode, Gear, GithubLogo, Scroll, Sparkle } from '@phosphor-icons/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { exampleIds, examples } from './menus';
 
@@ -73,7 +73,7 @@ export default function App() {
 			{/* Sidebar */}
 			<aside className="flex w-56 shrink-0 flex-col border-r border-border">
 				<header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
-					<ScrollText className="size-4" />
+					<Scroll className="size-4" />
 					<h1 className="text-sm font-semibold tracking-tight">fancy-menus</h1>
 					<span className="ml-auto rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
 						v0.0.0
@@ -94,7 +94,7 @@ export default function App() {
 								)}
 							>
 								<span>{id}</span>
-								<ChevronRight
+								<CaretRight
 									className={cn(
 										'size-3 transition-opacity',
 										id === activeId ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
@@ -114,7 +114,7 @@ export default function App() {
 						aria-label="GitHub"
 						className="inline-flex items-center gap-1 hover:text-foreground"
 					>
-						<Github className="size-3.5" />
+						<GithubLogo className="size-3.5" />
 						GitHub
 					</a>
 				</footer>
@@ -164,10 +164,10 @@ export default function App() {
 					<h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Preview</h3>
 					<div className="flex items-center gap-2">
 						<Button ref={triggerRef} variant="default" size="sm" onClick={openMenu}>
-							<Sparkles /> Open menu
+							<Sparkle /> Open menu
 						</Button>
 						<Button variant="outline" size="sm" onClick={() => setModalOpen(true)}>
-							<Code2 /> View config
+							<CodeSimple /> View config
 						</Button>
 					</div>
 				</header>
@@ -182,13 +182,13 @@ export default function App() {
 					<div className="shrink-0 border-b border-border px-4 py-2">
 						<TabsList>
 							<TabsTrigger value="edit">
-								<Settings2 className="size-3.5" /> Edit
+								<Gear className="size-3.5" /> Edit
 							</TabsTrigger>
 							<TabsTrigger value="json">
-								<FileJson className="size-3.5" /> JSON
+								<FileCode className="size-3.5" /> JSON
 							</TabsTrigger>
 							<TabsTrigger value="snapshot">
-								<Code2 className="size-3.5" /> Snapshot
+								<CodeSimple className="size-3.5" /> Snapshot
 							</TabsTrigger>
 							<TabsTrigger value="data">Sample data</TabsTrigger>
 						</TabsList>
@@ -224,7 +224,7 @@ export default function App() {
 							openMenu();
 						}}
 					>
-						<Sparkles /> Open with config
+						<Sparkle /> Open with config
 					</Button>
 				</footer>
 			</Modal>

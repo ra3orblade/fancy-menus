@@ -19,7 +19,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { CircleUser, Plus } from 'lucide-react';
+import { Plus, UserCircle } from '@phosphor-icons/react';
 
 interface Person {
 	id: string;
@@ -95,7 +95,7 @@ export const assigneePicker = defineMenu<AssigneePickerData, string[], Person>({
 		},
 		emptyState: {
 			kind: PanelKind.EmptyState,
-			icon: { icon: CircleUser, size: 24 },
+			icon: { icon: UserCircle, size: 24 },
 			message: 'No people match.',
 		},
 	},

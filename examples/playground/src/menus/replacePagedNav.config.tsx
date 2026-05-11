@@ -24,7 +24,7 @@ import {
 	Vertical,
 	defineMenu,
 } from '@fancy-menus/core';
-import { Bell, KeyRound, Languages, Palette } from 'lucide-react';
+import { Bell, Key, Palette, Translate } from '@phosphor-icons/react';
 
 interface PageRoot {
 	values: Record<string, unknown>;
@@ -60,7 +60,7 @@ const CATEGORIES: CategoryItem[] = [
 	},
 	{
 		id: 'language',
-		icon: Languages,
+		icon: Translate,
 		name: 'Language',
 		description: 'Interface + region',
 		target: 'pagedDetail',
@@ -68,7 +68,7 @@ const CATEGORIES: CategoryItem[] = [
 	},
 	{
 		id: 'security',
-		icon: KeyRound,
+		icon: Key,
 		name: 'Security',
 		description: '2FA, sessions',
 		target: 'pagedSubDetail',
