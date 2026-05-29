@@ -19,7 +19,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import {
 	ArrowRight,
 	ClockCounterClockwise,

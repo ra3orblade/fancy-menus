@@ -7,7 +7,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src'),
-			'@fancy-menus/core': path.resolve(__dirname, '../../packages/core/src'),
+			'@react-fancy-menus/core': path.resolve(__dirname, '../../packages/core/src'),
 		},
 	},
 	server: {

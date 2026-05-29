@@ -15,12 +15,12 @@ labels: bug
 <!--
 A minimal MenuConfig that triggers the bug, plus the steps to reproduce.
 The runnable form is best (a CodeSandbox or a Vite repo that imports
-@fancy-menus/core), but a config snippet is enough if the bug is purely
+@react-fancy-menus/core), but a config snippet is enough if the bug is purely
 in the schema → render path.
 -->
 
 ```ts
-import { defineMenu, BodyKind, RowKind, SourceKind } from '@fancy-menus/core';
+import { defineMenu, BodyKind, RowKind, SourceKind } from '@react-fancy-menus/core';
 
 const buggy = defineMenu({
 	id: 'buggy',
@@ -30,7 +30,7 @@ const buggy = defineMenu({
 
 ### Environment
 
-- `@fancy-menus/core` version:
+- `@react-fancy-menus/core` version:
 - React version:
 - Browser:
 - OS:

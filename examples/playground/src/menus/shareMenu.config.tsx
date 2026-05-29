@@ -18,7 +18,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { Copy, LinkSimple } from '@phosphor-icons/react';
 
 interface ShareMenuData {

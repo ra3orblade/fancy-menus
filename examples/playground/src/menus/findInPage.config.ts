@@ -7,7 +7,7 @@
  *   - persisted last query via storage
  */
 
-import { BodyKind, DimmerMode, HeaderKind, Horizontal, Vertical, defineMenu } from '@fancy-menus/core';
+import { BodyKind, DimmerMode, HeaderKind, Horizontal, Vertical, defineMenu } from '@react-fancy-menus/core';
 
 interface FindInPageData {
 	search: (query: string) => { current: number; total: number };

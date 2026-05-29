@@ -1,5 +1,5 @@
 /**
- * @fancy-menus/core
+ * @react-fancy-menus/core
  *
  * The configuration object schema for the menu constructor. This entry-point
  * re-exports every type a consumer needs to declare a menu.

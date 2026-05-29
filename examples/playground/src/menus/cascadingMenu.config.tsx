@@ -9,7 +9,7 @@
  *   - 3 nesting levels (root → format → text-style)
  */
 
-import { BodyKind, DimmerMode, Horizontal, RowKind, SourceKind, Vertical, defineMenu } from '@fancy-menus/core';
+import { BodyKind, DimmerMode, Horizontal, RowKind, SourceKind, Vertical, defineMenu } from '@react-fancy-menus/core';
 import {
 	ArrowLineDown,
 	ArrowLineUp,

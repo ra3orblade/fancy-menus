@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { BodyKind, DimmerMode, Horizontal, Vertical, defineMenu } from '@fancy-menus/core';
+import { BodyKind, DimmerMode, Horizontal, Vertical, defineMenu } from '@react-fancy-menus/core';
 import { Check } from '@phosphor-icons/react';
 import { type PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 

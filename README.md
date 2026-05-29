@@ -24,13 +24,13 @@ keyboard navigation, virtualization (`@tanstack/react-virtual`), drag-reorder
 ## Quickstart
 
 ```sh
-bun add @fancy-menus/core react react-dom
+bun add @react-fancy-menus/core react react-dom
 ```
 
 ```tsx
 // app.tsx
-import { MenuProvider } from '@fancy-menus/core';
-import '@fancy-menus/core/runtime/runtime.css';
+import { MenuProvider } from '@react-fancy-menus/core';
+import '@react-fancy-menus/core/runtime/runtime.css';
 
 import { commandPalette } from './menus/commandPalette.config';
 
@@ -46,7 +46,7 @@ export function App() {
 ```tsx
 // Toolbar.tsx
 import { useRef } from 'react';
-import { useMenu } from '@fancy-menus/core';
+import { useMenu } from '@react-fancy-menus/core';
 
 export function Toolbar() {
 	const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -66,7 +66,7 @@ export function Toolbar() {
 // menus/commandPalette.config.ts
 import {
 	defineMenu, BodyKind, RowKind, SourceKind, Vertical, Horizontal,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { FileText, Settings } from 'lucide-react';
 
 export const commandPalette = defineMenu({
@@ -395,7 +395,7 @@ bun scripts/interact.mjs
 
 ## Open work
 
-- npm publish prep for `@fancy-menus/core` (version bump, `files`,
+- npm publish prep for `@react-fancy-menus/core` (version bump, `files`,
   `publishConfig`, export map verification).
 - Heavier panel renderers — `codeEditor`, `katexPreview`, `qrCode` — ship
   lightweight fallbacks; consumers who need monaco / KaTeX / a scannable

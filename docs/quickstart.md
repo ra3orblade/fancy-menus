@@ -5,11 +5,11 @@ Five steps to a working menu.
 ## 1. Install
 
 ```sh
-bun  add @fancy-menus/core react react-dom
+bun  add @react-fancy-menus/core react react-dom
 # or
-npm  install @fancy-menus/core react react-dom
+npm  install @react-fancy-menus/core react react-dom
 # or
-pnpm add @fancy-menus/core react react-dom
+pnpm add @react-fancy-menus/core react react-dom
 ```
 
 ## 2. Mount the provider + import the stylesheet
@@ -18,8 +18,8 @@ pnpm add @fancy-menus/core react react-dom
 // src/main.tsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { MenuProvider } from '@fancy-menus/core';
-import '@fancy-menus/core/runtime/runtime.css';
+import { MenuProvider } from '@react-fancy-menus/core';
+import '@react-fancy-menus/core/runtime/runtime.css';
 import { App } from './App';
 import { commandPalette } from './menus/commandPalette.config';
 
@@ -46,7 +46,7 @@ import {
 	SourceKind,
 	Vertical,
 	Horizontal,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { FileText, Search, Settings } from 'lucide-react';
 
 interface Cmd {
@@ -90,7 +90,7 @@ export const commandPalette = defineMenu<{ onPick: (id: string) => void }, strin
 ```tsx
 // src/App.tsx
 import { useRef } from 'react';
-import { useMenu } from '@fancy-menus/core';
+import { useMenu } from '@react-fancy-menus/core';
 
 export function App() {
 	const triggerRef = useRef<HTMLButtonElement | null>(null);

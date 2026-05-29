@@ -102,8 +102,8 @@ fancy-menus/
 	 z-index, etc.) and dialogs render as `position: static` flowing into the
 	 document.
 4. **Stylesheet is JS-imported, not @import-ed.** Vite's PostCSS pipeline
-	 doesn't resolve `@fancy-menus/core/runtime.css` through workspace aliases;
-	 the consumer must `import '@fancy-menus/core/runtime/runtime.css'` in JS.
+	 doesn't resolve `@react-fancy-menus/core/runtime.css` through workspace aliases;
+	 the consumer must `import '@react-fancy-menus/core/runtime/runtime.css'` in JS.
 5. **Store mutations produce new array references.** `useSyncExternalStore`
 	 does shallow snapshot equality. `MenuStore` methods all do
 	 `this.menus = [...next]`, never `push`/`pop`/in-place mutation.
@@ -164,7 +164,7 @@ Both smoke scripts auto-detect the dev URL when `URL` env is unset (default
 
 1. Author `examples/playground/src/menus/<name>.config.ts(x)`. Use
 	 `defineMenu<TData, TValue>({ … })` and reference enums from
-	 `@fancy-menus/core` (never string literals).
+	 `@react-fancy-menus/core` (never string literals).
 2. Register it in `examples/playground/src/menus/index.ts` with a one-line
 	 description and sample data.
 3. Add a smoke entry: `{ id, expect: '<css selector inside the dialog>' }`

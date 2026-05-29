@@ -5,7 +5,7 @@
  * operator selectors per group, add-rule / add-group / delete actions.
  */
 
-import { BodyKind, DimmerMode, Horizontal, PanelKind, Vertical, defineMenu } from '@fancy-menus/core';
+import { BodyKind, DimmerMode, Horizontal, PanelKind, Vertical, defineMenu } from '@react-fancy-menus/core';
 
 interface Rule {
 	id: string;

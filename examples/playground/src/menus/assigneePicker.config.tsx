@@ -18,7 +18,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { Plus, UserCircle } from '@phosphor-icons/react';
 
 interface Person {
