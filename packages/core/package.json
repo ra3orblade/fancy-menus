@@ -1,19 +1,59 @@
 {
-	"name": "@fancy-menus/core",
-	"version": "0.0.0",
+	"name": "@react-fancy-menus/core",
+	"version": "0.1.0",
 	"description": "Configuration types and primitives for the fancy-menus constructor.",
 	"license": "MIT",
-	"type": "module",
-	"main": "./src/index.ts",
-	"types": "./src/index.ts",
-	"exports": {
-		".": "./src/index.ts",
-		"./types": "./src/types/index.ts",
-		"./runtime": "./src/runtime/index.ts",
-		"./runtime.css": "./src/runtime/runtime.css"
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ra3orblade/fancy-menus.git",
+		"directory": "packages/core"
 	},
+	"homepage": "https://github.com/ra3orblade/fancy-menus/tree/main/packages/core#readme",
+	"bugs": {
+		"url": "https://github.com/ra3orblade/fancy-menus/issues"
+	},
+	"keywords": [
+		"react",
+		"menu",
+		"context-menu",
+		"dropdown",
+		"popover",
+		"headless",
+		"floating-ui"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./types": {
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/types/index.js"
+		},
+		"./runtime": {
+			"types": "./dist/runtime/index.d.ts",
+			"import": "./dist/runtime/index.js"
+		},
+		"./runtime.css": "./dist/runtime/runtime.css"
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"sideEffects": [
+		"**/*.css"
+	],
 	"scripts": {
 		"typecheck": "tsc --noEmit",
+		"build": "tsup",
+		"prepublishOnly": "bun run build",
 		"test": "vitest run",
 		"test:watch": "vitest"
 	},
@@ -35,6 +75,7 @@
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",
 		"happy-dom": "^20.9.0",
+		"tsup": "^8.5.1",
 		"typescript": "^5.6.0",
 		"vitest": "^2.1.5"
 	}

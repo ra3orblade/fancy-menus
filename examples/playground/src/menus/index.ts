@@ -7,7 +7,7 @@
  *   - a short blurb explaining which schema features the example exercises
  */
 
-import type { MenuConfig } from '@fancy-menus/core';
+import type { MenuConfig } from '@react-fancy-menus/core';
 import { assigneePicker } from './assigneePicker.config';
 import {
 	cascadingExport,

@@ -12,7 +12,7 @@
 		"test": "bun scripts/run-all.mjs"
 	},
 	"dependencies": {
-		"@fancy-menus/core": "workspace:*",
+		"@react-fancy-menus/core": "workspace:*",
 		"@phosphor-icons/react": "^2",
 		"@radix-ui/react-checkbox": "^1.1.2",
 		"@radix-ui/react-dialog": "^1.1.2",

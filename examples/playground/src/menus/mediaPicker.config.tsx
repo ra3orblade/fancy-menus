@@ -20,7 +20,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { Image as ImageIcon, Link, Upload } from '@phosphor-icons/react';
 
 interface ImagePickerData {

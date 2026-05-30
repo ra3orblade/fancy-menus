@@ -18,7 +18,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { Code, Link, Palette, TextB, TextItalic, TextStrikethrough, TextUnderline } from '@phosphor-icons/react';
 
 interface FormatItem {

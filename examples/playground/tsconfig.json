@@ -5,8 +5,8 @@
 		"noEmit": true,
 		"paths": {
 			"@/*": ["./src/*"],
-			"@fancy-menus/core": ["../../packages/core/src/index.ts"],
-			"@fancy-menus/core/*": ["../../packages/core/src/*"]
+			"@react-fancy-menus/core": ["../../packages/core/src/index.ts"],
+			"@react-fancy-menus/core/*": ["../../packages/core/src/*"]
 		},
 		"baseUrl": "."
 	},

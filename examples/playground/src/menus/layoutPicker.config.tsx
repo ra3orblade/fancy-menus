@@ -16,7 +16,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 import { Calendar, Columns, GridFour, Kanban, List, Network, Rows, SquaresFour } from '@phosphor-icons/react';
 
 interface LayoutOption {

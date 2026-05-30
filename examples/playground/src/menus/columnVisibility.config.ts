@@ -23,7 +23,7 @@ import {
 	SourceKind,
 	Vertical,
 	defineMenu,
-} from '@fancy-menus/core';
+} from '@react-fancy-menus/core';
 
 interface ColumnItem {
 	id: string;

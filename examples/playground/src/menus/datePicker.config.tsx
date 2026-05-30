@@ -7,7 +7,7 @@
  *   - footer with Today / Clear buttons
  */
 
-import { BodyKind, DimmerMode, Horizontal, type MenuCtx, PanelKind, Vertical, defineMenu } from '@fancy-menus/core';
+import { BodyKind, DimmerMode, Horizontal, type MenuCtx, PanelKind, Vertical, defineMenu } from '@react-fancy-menus/core';
 import { CalendarBlank } from '@phosphor-icons/react';
 
 interface DatePickerData {

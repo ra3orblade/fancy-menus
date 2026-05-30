@@ -62,7 +62,7 @@ of these will get bounced.
    `../../packages/core/src/runtime/**`.** Otherwise Tailwind purges the
    runtime's classes and dialogs render as `position: static`.
 4. **`runtime.css` is JS-imported, not `@import`-ed.** Vite's PostCSS
-   pipeline doesn't resolve `@fancy-menus/core/runtime.css` through
+   pipeline doesn't resolve `@react-fancy-menus/core/runtime.css` through
    workspace aliases.
 5. **Store mutations produce new array references.**
    `useSyncExternalStore` does shallow snapshot equality. `MenuStore`

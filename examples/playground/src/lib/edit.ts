@@ -1,4 +1,4 @@
-import type { MenuConfig } from '@fancy-menus/core';
+import type { MenuConfig } from '@react-fancy-menus/core';
 
 /**
  * Per-example config edits. Only the chrome / position fields the editor

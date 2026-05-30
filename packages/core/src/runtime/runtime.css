@@ -6,7 +6,7 @@
  * runtime references them through `var(--fm-*)`.
  *
  * Import once at app entry:
- *   import '@fancy-menus/core/runtime/runtime.css';
+ *   import '@react-fancy-menus/core/runtime/runtime.css';
  */
 
 :root {
