@@ -2,7 +2,13 @@
 	"name": "fancy-menus",
 	"version": "0.0.0",
 	"private": true,
-	"description": "A fully-customizable menu constructor for React",
+	"description": "Declarative, accessible React menu library — build dropdowns, context menus, command palettes & popovers from typed config. TypeScript, headless, virtualized.",
+	"keywords": [
+		"react", "menu", "dropdown", "dropdown-menu", "context-menu",
+		"command-palette", "popover", "select", "combobox", "tooltip",
+		"headless", "accessible", "a11y", "declarative", "typescript",
+		"floating-ui", "virtualized", "drag-and-drop", "react-component", "ui"
+	],
 	"license": "MIT",
 	"repository": {
 		"type": "git",
