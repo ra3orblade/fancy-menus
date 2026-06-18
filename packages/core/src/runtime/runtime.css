@@ -194,7 +194,6 @@
 .fm-list {
 	position: relative;
 	max-height: 60vh;
-	min-height: 40px;
 	overflow-y: auto;
 	outline: none;
 }
