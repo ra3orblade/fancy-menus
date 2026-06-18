@@ -3,6 +3,15 @@
 All notable changes to `@react-fancy-menus/core` are documented here. This
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.2.1
+
+### Fixed
+
+- Dropped the `min-height: 40px` floor on the `.fm-list` scroller. It forced
+  empty vertical space on short menus — wrong for small option lists and the
+  caret-typeahead mode (a 1–2 item `/`-menu shouldn't reserve 40px). The
+  scroller sizes to its content; `max-height: 60vh` still caps it.
+
 ## 0.2.0
 
 The runtime now honors four positioning / accessibility fields that were
