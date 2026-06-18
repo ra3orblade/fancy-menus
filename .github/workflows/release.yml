@@ -28,10 +28,16 @@ jobs:
           bun-version: latest
 
       # Node 22 (>= 22.14.0) provides the runtime; bun runs the build/tests.
+      # NOTE: do NOT set `registry-url` here. With it, actions/setup-node writes
+      # an `.npmrc` containing `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}`
+      # — and since we dropped NPM_TOKEN, that token is empty. An empty
+      # `_authToken` makes npm attempt (failing) token auth and *shadows* OIDC
+      # trusted publishing, so `npm publish` 404s on the PUT. Omitting
+      # registry-url leaves no token configured, so npm performs the OIDC
+      # exchange against the default public registry.
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
 
       # Trusted publishing (OIDC) needs npm >= 11.5.1; the npm bundled with
       # Node 22 is older, so upgrade to latest before publishing.
