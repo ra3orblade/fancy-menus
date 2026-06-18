@@ -12,7 +12,7 @@ import { DimmerMode, FooterKind, HeaderKind, MenuState, PositionStrategy } from 
 import { BodyView } from './body';
 import { makeCtx } from './ctx';
 import { FilterInput } from './filter-input';
-import { compute, watchPosition } from './position';
+import { compute, mergePositionConfig, pointRect, watchPosition } from './position';
 import { useProviderOptions, useStore } from './provider';
 import { SafePolygon } from './safe-polygon';
 import type { OpenMenu } from './store';
@@ -52,14 +52,27 @@ export function MenuView({ open }: MenuProps) {
 	// `open` reference (state transitions, sibling updates, …), and keying
 	// off it would tear down autoUpdate on every emit and risk stale
 	// `setPos` writes from in-flight `compute()` promises.
-	const positionCfg = open.config.position;
+	//
+	// `param.position` shallow-merges over `config.position` (per-open wins
+	// per-key) so one registered config can open at different anchors /
+	// alignments without a config-per-variant. Memoized on the two source
+	// objects, both of which keep a stable reference across non-position
+	// store emissions (state transitions spread the OpenMenu, not `param`).
+	const positionCfg = useMemo(
+		() => mergePositionConfig(open.config.position, open.param.position),
+		[open.config.position, open.param.position]
+	);
 	const positionEl = open.param.element;
 	const positionRect = open.param.rect;
 	useEffect(() => {
 		const el = containerEl;
 		if (!el) return;
 		const ref = positionEl ?? positionRect;
-		if (!ref) {
+		// fixedX/fixedY pin the menu to viewport coordinates even with no
+		// element/rect anchor — synthesize a point reference so the fixed
+		// branch still flows through compute (flip/shift clamping included).
+		const hasFixed = positionCfg?.fixedX != null || positionCfg?.fixedY != null;
+		if (!ref && !hasFixed) {
 			const w = el.offsetWidth;
 			const h = el.offsetHeight;
 			setPos({
@@ -68,7 +81,18 @@ export function MenuView({ open }: MenuProps) {
 			});
 			return;
 		}
-		const referenceEl = typeof ref === 'string' ? document.querySelector(ref) : (ref as Element | DOMRect);
+		const referenceEl = typeof ref === 'string' ? document.querySelector(ref) : (ref as Element | DOMRect | null);
+		// Anchorless fixed-coordinate open: drive compute off a viewport point.
+		if (!referenceEl && hasFixed) {
+			let cancelled = false;
+			void compute(pointRect(positionCfg?.fixedX ?? 0, positionCfg?.fixedY ?? 0), el, positionCfg).then((r) => {
+				if (cancelled) return;
+				setPos({ x: r.x, y: r.y, placement: r.placement });
+			});
+			return () => {
+				cancelled = true;
+			};
+		}
 		if (!referenceEl) return;
 		if (referenceEl instanceof Element) {
 			return watchPosition(referenceEl, el, positionCfg, (r) =>
@@ -159,11 +183,7 @@ export function MenuView({ open }: MenuProps) {
 			<div
 				ref={containerRef}
 				role={open.config.chrome?.role ?? 'dialog'}
-				aria-label={
-					typeof open.config.chrome?.title === 'string'
-						? open.config.chrome.title
-						: open.config.chrome?.ariaLabel
-				}
+				aria-label={resolveAriaLabel(open)}
 				data-fm-menu-id={open.id}
 				data-placement={pos?.placement}
 				data-state={open.state}
@@ -174,11 +194,11 @@ export function MenuView({ open }: MenuProps) {
 					open.config.chrome?.className
 				)}
 				style={{
-					position: open.config.position?.strategy === PositionStrategy.Absolute ? 'absolute' : 'fixed',
+					position: positionCfg?.strategy === PositionStrategy.Absolute ? 'absolute' : 'fixed',
 					left: pos?.x,
 					top: pos?.y,
-					width: open.config.position?.width,
-					minWidth: open.config.position?.minWidth ?? 220,
+					width: positionCfg?.width,
+					minWidth: positionCfg?.minWidth ?? 220,
 					// While position is being measured we use opacity (not visibility)
 					// so descendants can still receive autofocus, and pointer-events:none
 					// so the invisible menu doesn't capture input. The open animation
@@ -220,6 +240,8 @@ export function MenuView({ open }: MenuProps) {
 							filter={filter}
 							onCloseRequest={onClose}
 							isSubMenu={Boolean(open.param.parentId)}
+							keyboard={open.config.keyboard}
+							controlledActiveIndex={open.param.activeIndex}
 						/>
 					</div>
 				)}
@@ -230,6 +252,19 @@ export function MenuView({ open }: MenuProps) {
 	);
 
 	return createPortal(content, document.body);
+}
+
+/**
+ * Resolve the outer shell's accessible name. A per-open `param.ariaLabel`
+ * wins (so one config can carry many screen-reader names); otherwise a
+ * string `title` is mirrored, falling back to the static `chrome.ariaLabel`.
+ * The internal menu id is never exposed.
+ */
+export function resolveAriaLabel(open: OpenMenu): string | undefined {
+	if (open.param.ariaLabel != null) return open.param.ariaLabel;
+	const title = open.config.chrome?.title;
+	if (typeof title === 'string') return title;
+	return open.config.chrome?.ariaLabel;
 }
 
 function isEmptyBody(

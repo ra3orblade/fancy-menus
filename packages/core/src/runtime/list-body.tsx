@@ -23,7 +23,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { ListBody } from '../types/body';
 import type { MenuCtx } from '../types/context';
-import { Orientation, RowKind, SortAxis } from '../types/enums';
+import { KeyboardNavigation, Orientation, RowKind, SortAxis } from '../types/enums';
+import type { KeyboardConfig } from '../types/keyboard';
 import type { RowSpec } from '../types/row';
 import { useKeyboard } from './keyboard';
 import { pickSpec, renderRow } from './rows';
@@ -35,12 +36,24 @@ interface ListBodyViewProps {
 	filter: string;
 	onCloseRequest: () => void;
 	isSubMenu?: boolean;
+	/** Menu keyboard config — honored so `navigation: None` / `disabled` take effect. */
+	keyboard?: KeyboardConfig;
+	/** Controlled highlight (`OpenParam.activeIndex`) for host-driven typeaheads. */
+	controlledActiveIndex?: number;
 }
 
 const DEFAULT_ROW_HEIGHT = 32;
 const DEFAULT_OVERSCAN = 8;
 
-export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: ListBodyViewProps) {
+export function ListBodyView({
+	body,
+	ctx,
+	filter,
+	onCloseRequest,
+	isSubMenu,
+	keyboard,
+	controlledActiveIndex,
+}: ListBodyViewProps) {
 	const { items: rawItems, loading, hasMore, loadMore } = useResolvedSource(body.source, filter, ctx);
 	// Async / Composite sources receive `filter` directly and curate their
 	// own results. Re-filtering them client-side would drop server-ranked
@@ -54,6 +67,11 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 
 	const scrollerRef = useRef<HTMLDivElement | null>(null);
 	const [activeIndex, setActiveIndex] = useState(0);
+	// Host-driven typeaheads (`OpenParam.activeIndex`) control the highlight
+	// externally; when supplied it overrides the internal keyboard-nav index
+	// so the painted active row stays pixel-identical to a standard menu.
+	const isControlled = controlledActiveIndex != null;
+	const effectiveActiveIndex = isControlled ? (controlledActiveIndex as number) : activeIndex;
 
 	// Reset active when filter or items change. For horizontal toolbars
 	// (icon bars, format strips) we deliberately leave nothing pre-highlighted
@@ -70,7 +88,13 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 	// click. We defer to next frame so that a chrome filter input (which
 	// has its own autoFocus) wins the focus race when present; otherwise
 	// the menu body itself takes focus.
+	//
+	// `focusOnMount: false` opts out entirely — a host-driven typeahead
+	// (caret `/`-menu, `@`-mention) must keep DOM focus in the editor /
+	// contenteditable, so the body renders + positions but never steals it.
+	const focusOnMount = body.focusOnMount ?? true;
 	useEffect(() => {
+		if (!focusOnMount) return;
 		const id = requestAnimationFrame(() => {
 			const el = scrollerRef.current;
 			if (!el) return;
@@ -81,7 +105,7 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 			el.focus({ preventScroll: true });
 		});
 		return () => cancelAnimationFrame(id);
-	}, [isSubMenu]);
+	}, [isSubMenu, focusOnMount]);
 
 	const rowHeight = useCallback(
 		(index: number): number => {
@@ -105,10 +129,30 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 			typeof body.virtualized === 'object' ? (body.virtualized.overscan ?? DEFAULT_OVERSCAN) : DEFAULT_OVERSCAN,
 	});
 
-	// Keyboard wiring against the scroller element.
+	// Controlled highlight: keep the externally-driven active row scrolled
+	// into view. Keyboard nav (which normally scrolls on setIndex) is off in
+	// this mode, so the host moving `activeIndex` needs this to stay visible.
+	useEffect(() => {
+		if (!isControlled || controlledActiveIndex == null || controlledActiveIndex < 0) return;
+		virtualizer.scrollToIndex(controlledActiveIndex, { align: 'auto' });
+	}, [isControlled, controlledActiveIndex, virtualizer]);
+
+	// Keyboard wiring against the scroller element. The menu's keyboard config
+	// is honored here so `navigation: None` (host-driven typeaheads) and
+	// `disabled` actually take effect — useKeyboard bails on both, leaving the
+	// host's own keydown handler to drive arrows/enter without the runtime
+	// fighting it. A stray `Grid2D` on a list is coerced to Linear: lists are
+	// inherently 1-D (grids drive their own nav in grid-body).
+	const listKeyboard = useMemo(
+		() =>
+			keyboard?.navigation === KeyboardNavigation.Grid2D
+				? { ...keyboard, navigation: KeyboardNavigation.Linear }
+				: keyboard,
+		[keyboard]
+	);
 	useKeyboard(
 		scrollerRef.current,
-		undefined,
+		listKeyboard,
 		{
 			count: items.length,
 			index: activeIndex,
@@ -262,7 +306,7 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 								item,
 								spec,
 								index: idx,
-								active: idx === activeIndex,
+								active: idx === effectiveActiveIndex,
 								ctx,
 								onActivate: () => setActiveIndex(idx),
 								extra: { filter },
@@ -298,7 +342,7 @@ export function ListBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: L
 								item,
 								spec,
 								index: vi.index,
-								active: vi.index === activeIndex,
+								active: vi.index === effectiveActiveIndex,
 								ctx,
 								onActivate: () => setActiveIndex(vi.index),
 								extra: { filter },

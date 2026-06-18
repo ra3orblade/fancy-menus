@@ -5,6 +5,7 @@
 import type { BodyConfig } from '../types/body';
 import type { MenuCtx } from '../types/context';
 import { BodyKind } from '../types/enums';
+import type { KeyboardConfig } from '../types/keyboard';
 import { FormBodyView } from './form-body';
 import { GridBodyView } from './grid-body';
 import { ListBodyView } from './list-body';
@@ -17,9 +18,13 @@ interface Props {
 	onCloseRequest: () => void;
 	/** True when this body lives inside a sub-menu (`open.param.parentId` set). */
 	isSubMenu?: boolean;
+	/** Menu keyboard config — threaded so list bodies honor `navigation` / `disabled`. */
+	keyboard?: KeyboardConfig;
+	/** Controlled list highlight (`OpenParam.activeIndex`) for host-driven typeaheads. */
+	controlledActiveIndex?: number;
 }
 
-export function BodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: Props) {
+export function BodyView({ body, ctx, filter, onCloseRequest, isSubMenu, keyboard, controlledActiveIndex }: Props) {
 	switch (body.kind) {
 		case BodyKind.List:
 			return (
@@ -29,6 +34,8 @@ export function BodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: Props
 					filter={filter}
 					onCloseRequest={onCloseRequest}
 					isSubMenu={isSubMenu}
+					keyboard={keyboard}
+					controlledActiveIndex={controlledActiveIndex}
 				/>
 			);
 		case BodyKind.Grid:
@@ -50,7 +57,7 @@ export function BodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: Props
 	}
 }
 
-function ComposedBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: Props) {
+function ComposedBodyView({ body, ctx, filter, onCloseRequest, isSubMenu, keyboard, controlledActiveIndex }: Props) {
 	const composed = body as any;
 	return (
 		<div className="fm-composed flex flex-col" style={{ gap: composed.gap ?? 0 }}>
@@ -71,6 +78,8 @@ function ComposedBodyView({ body, ctx, filter, onCloseRequest, isSubMenu }: Prop
 								filter={filter}
 								onCloseRequest={onCloseRequest}
 								isSubMenu={isSubMenu}
+								keyboard={keyboard}
+								controlledActiveIndex={controlledActiveIndex}
 							/>
 						</div>
 					);
