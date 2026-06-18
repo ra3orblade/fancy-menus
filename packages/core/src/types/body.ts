@@ -68,6 +68,16 @@ export interface ListBody<TItem = any, TValue = any, TData = any> {
 	loading?: LoaderPanel | boolean;
 	/** Fired when the user changes the filter input (chrome-supplied). */
 	onFilterChange?: (value: string, ctx: MenuCtx) => void;
+	/**
+	 * Whether the list body grabs DOM focus on mount so ArrowUp/Down work
+	 * without a click. Default `true`. Set `false` for host-driven
+	 * typeaheads (a caret `/`-menu, `@`-mention) where DOM focus must stay in
+	 * the editor / contenteditable: the body renders + positions but never
+	 * calls `.focus()`. Mirrors `FilterConfig.focusOnMount`. Pair with a
+	 * controlled `OpenParam.activeIndex` and `KeyboardNavigation.None` so the
+	 * runtime doesn't fight the host for arrow/enter keys.
+	 */
+	focusOnMount?: boolean;
 }
 
 export interface SortableConfig<TItem = any> {

@@ -52,6 +52,11 @@ export function useKeyboard(
 	useEffect(() => {
 		if (!target || config?.disabled) return;
 		const nav = config?.navigation ?? KeyboardNavigation.Linear;
+		// `None` hands the keyboard to the host (e.g. a caret typeahead that
+		// owns arrows/enter from its own contenteditable keydown handler);
+		// the runtime stays out of the way entirely. Escape still closes via
+		// the menu shell's own window-level handler.
+		if (nav === KeyboardNavigation.None) return;
 		const d = config?.defaults ?? {};
 		const closeOnEscape = d.closeOnEscape ?? true;
 		const selectOnEnter = d.selectOnEnter ?? true;

@@ -9,9 +9,31 @@ import type { PositionConfig } from './position';
 
 export interface OpenParam<TData = any> {
 	data?: TData;
+	/**
+	 * Per-open position override. Shallow-merged over the menu's static
+	 * `config.position` at open time (and on `update(id, { position })`),
+	 * with the per-open value winning per-key. Lets one registered config be
+	 * opened at different anchors / alignments without a config-per-variant.
+	 */
 	position?: Partial<PositionConfig>;
 	element?: Element | string;
 	rect?: DOMRect;
+	/**
+	 * Per-open accessible name for the outer shell. Wins over
+	 * `config.chrome.ariaLabel`, letting one config carry many distinct
+	 * screen-reader names (e.g. "Sort by" vs. "Note actions") instead of
+	 * registering a separate config per label.
+	 */
+	ariaLabel?: string;
+	/**
+	 * Controlled highlight for a list body. When set, the runtime paints this
+	 * row index with the active treatment instead of using its own internal
+	 * keyboard-nav index — for host-driven typeaheads where an external owner
+	 * (a caret `/`-menu, `@`-mention) moves the selection. Updatable live via
+	 * `update(id, { activeIndex })`. Pair with `ListBody.focusOnMount: false`
+	 * and `keyboard.navigation: KeyboardNavigation.None`.
+	 */
+	activeIndex?: number;
 	/** Mark as a sub-menu of `parentId`. */
 	parentId?: string;
 	/**
