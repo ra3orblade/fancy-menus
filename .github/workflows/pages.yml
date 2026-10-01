@@ -1,0 +1,51 @@
+name: Deploy playground
+
+# Builds examples/playground and publishes it to GitHub Pages
+# (https://ra3orblade.github.io/fancy-menus/).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build playground
+        working-directory: examples/playground
+        env:
+          BASE_PATH: /fancy-menus/
+        run: bun run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: examples/playground/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

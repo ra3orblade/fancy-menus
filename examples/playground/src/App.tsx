@@ -24,8 +24,14 @@ function replacer(_key: string, value: unknown): unknown {
 	return value;
 }
 
+function hashExampleId(): string | null {
+	const id = decodeURIComponent(window.location.hash.slice(1));
+	return id in examples ? id : null;
+}
+
 export default function App() {
-	const [activeId, setActiveId] = useState<string>(exampleIds[0]!);
+	// `#<exampleId>` deep-links to an example (used by the README / hosted demo).
+	const [activeId, setActiveId] = useState<string>(() => hashExampleId() ?? exampleIds[0]!);
 	const example = examples[activeId] ?? examples[exampleIds[0]!]!;
 	const triggerRef = useRef<HTMLButtonElement | null>(null);
 	const menu = useMenu();
@@ -53,6 +59,30 @@ export default function App() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [editedConfig, activeId]);
 
+	// Picking an example opens its menu straight away so the preview never
+	// sits empty; the trigger in the canvas re-opens it after dismissal.
+	useEffect(() => {
+		menu.closeAll();
+		const raf = requestAnimationFrame(() =>
+			menu.open(activeId, { element: triggerRef.current ?? undefined, data: example.sampleData })
+		);
+		return () => cancelAnimationFrame(raf);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeId]);
+
+	useEffect(() => {
+		if (window.location.hash.slice(1) !== activeId) history.replaceState(null, '', `#${activeId}`);
+	}, [activeId]);
+
+	useEffect(() => {
+		const onHashChange = () => {
+			const id = hashExampleId();
+			if (id) setActiveId(id);
+		};
+		window.addEventListener('hashchange', onHashChange);
+		return () => window.removeEventListener('hashchange', onHashChange);
+	}, []);
+
 	const handleEdit = (patch: Partial<MenuEdits>) => {
 		setEditsByExample((prev) => ({
 			...prev,
@@ -76,7 +106,7 @@ export default function App() {
 					<Scroll className="size-4" />
 					<h1 className="text-sm font-semibold tracking-tight">fancy-menus</h1>
 					<span className="ml-auto rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-						v0.0.0
+						v{__CORE_VERSION__}
 					</span>
 				</header>
 				<ScrollArea className="flex-1">
@@ -106,7 +136,7 @@ export default function App() {
 				</ScrollArea>
 				<Separator />
 				<footer className="flex items-center justify-between px-4 py-3 text-[11px] text-muted-foreground">
-					<span>Edit fields, then Open menu.</span>
+					<span>Pick an example.</span>
 					<a
 						href="https://github.com/ra3orblade/fancy-menus"
 						target="_blank"
@@ -157,22 +187,24 @@ export default function App() {
 				</ScrollArea>
 			</section>
 
-			{/* Preview area — trigger pinned to the top so menus have the
-			    entire pane to open downward without clipping. */}
+			{/* Preview area — the trigger sits near the top of the canvas so
+			    menus anchored to it have the rest of the pane to open downward
+			    without clipping. */}
 			<main className="relative flex flex-1 flex-col overflow-hidden bg-[radial-gradient(circle_at_center,hsl(var(--muted))_0%,hsl(var(--background))_60%)]">
 				<header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border px-6">
 					<h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Preview</h3>
-					<div className="flex items-center gap-2">
-						<Button ref={triggerRef} variant="default" size="sm" onClick={openMenu}>
-							<Sparkle /> Open menu
-						</Button>
-						<Button variant="outline" size="sm" onClick={() => setModalOpen(true)}>
-							<CodeSimple /> View config
-						</Button>
-					</div>
+					<Button variant="outline" size="sm" onClick={() => setModalOpen(true)}>
+						<CodeSimple /> View config
+					</Button>
 				</header>
-				<div className="flex flex-1 items-start justify-center pt-12 text-xs text-muted-foreground">
-					Click <span className="mx-1 font-medium text-foreground">Open menu</span> to launch
+				<div className="flex flex-1 flex-col items-center gap-2 pt-8">
+					<p className="text-xs text-muted-foreground">
+						The <span className="font-medium text-foreground">{activeId}</span> menu opens from the button
+						below. Press Esc or click outside to close it.
+					</p>
+					<Button ref={triggerRef} size="lg" onClick={openMenu} className="shadow-md">
+						<Sparkle /> Open menu
+					</Button>
 				</div>
 			</main>
 
