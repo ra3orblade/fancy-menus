@@ -4,6 +4,10 @@ A fully-customizable React menu constructor. Declare a typed `MenuConfig`
 (chrome + body + sub-menus + keyboard + storage + lifecycle) and the runtime
 renders, positions, and handles input for you.
 
+**[▶ Live demo](https://ra3orblade.github.io/fancy-menus/)** · [GitHub](https://github.com/ra3orblade/fancy-menus)
+
+<a href="https://ra3orblade.github.io/fancy-menus/#commandPalette"><img src="https://raw.githubusercontent.com/ra3orblade/fancy-menus/main/docs/screenshots/commandPalette.png" alt="Command palette built with fancy-menus" width="480"></a>
+
 ## Install
 
 ```bash

@@ -5,6 +5,23 @@ typed configuration objects; the runtime handles positioning (Floating UI),
 keyboard navigation, virtualization (`@tanstack/react-virtual`), drag-reorder
 (`@dnd-kit`), sub-menu stacking, persistence, lifecycle, and theming.
 
+**[▶ Live demo](https://ra3orblade.github.io/fancy-menus/)**: every example below runs in the browser, with live config editing.
+
+<table>
+  <tr>
+    <td width="33%" valign="top"><a href="https://ra3orblade.github.io/fancy-menus/#commandPalette"><img src="docs/screenshots/commandPalette.png" alt="Command palette" width="100%"></a><br><sub>Command palette</sub></td>
+    <td width="33%" valign="top"><a href="https://ra3orblade.github.io/fancy-menus/#datePicker"><img src="docs/screenshots/datePicker.png" alt="Date + time picker" width="100%"></a><br><sub>Date + time picker</sub></td>
+    <td width="33%" valign="top"><a href="https://ra3orblade.github.io/fancy-menus/#mediaPicker"><img src="docs/screenshots/mediaPicker.png" alt="Media picker (tabs + grid)" width="100%"></a><br><sub>Media picker (tabs + grid)</sub></td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top"><a href="https://ra3orblade.github.io/fancy-menus/#queryBuilder"><img src="docs/screenshots/queryBuilder.png" alt="Nested query builder" width="100%"></a><br><sub>Nested query builder</sub></td>
+    <td width="33%" valign="top"><a href="https://ra3orblade.github.io/fancy-menus/#colorPickerShadcn"><img src="docs/screenshots/colorPickerShadcn.png" alt="Color picker" width="100%"></a><br><sub>Color picker</sub></td>
+    <td width="33%" valign="top"><a href="https://ra3orblade.github.io/fancy-menus/#settingsWizard"><img src="docs/screenshots/settingsWizard.png" alt="Multi-page settings" width="100%"></a><br><sub>Multi-page settings</sub></td>
+  </tr>
+</table>
+
+<p align="center"><a href="https://ra3orblade.github.io/fancy-menus/#textFormatter"><img src="docs/screenshots/textFormatter.png" alt="Inline text-format toolbar" width="280"></a><br><sub>Inline toolbar</sub></p>
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  defineMenu({ chrome, position, body, sub-menus, keyboard, storage })   │
@@ -375,13 +392,19 @@ Variants via attribute selectors: `.fm-row[data-active='true']`,
 
 ## Playground
 
+Hosted at **<https://ra3orblade.github.io/fancy-menus/>** (deployed from `main` by
+`.github/workflows/pages.yml`). Link to a specific example with
+`#<exampleId>`, e.g. [`#datePicker`](https://ra3orblade.github.io/fancy-menus/#datePicker). To run it locally:
+
 ```sh
 bun install
 cd examples/playground
 bun run dev
 ```
 
-Sidebar | Editor | Preview layout. Each example exposes its config as
+Sidebar | Editor | Preview layout. Picking an example opens its menu
+from the **Open menu** button in the preview; that button re-opens it after
+Esc / click-outside. Each example exposes its config as
 form controls (Edit tab) and as live JSON (JSON tab); changes re-register
 the menu and re-open it so you can see the effect immediately.
 
@@ -392,6 +415,9 @@ cd examples/playground
 bun scripts/smoke.mjs
 bun scripts/interact.mjs
 ```
+
+README screenshots are generated, not hand-captured. With the dev server
+running, `bun scripts/screenshots.mjs` rewrites `docs/screenshots/*.png`.
 
 ## Open work
 

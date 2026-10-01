@@ -43,6 +43,12 @@ jobs:
         working-directory: examples/playground
         run: bunx puppeteer browsers install chrome
 
+      # Ubuntu 24.04 runners block unprivileged user namespaces via AppArmor,
+      # so Chrome aborts with "No usable sandbox!". Re-allow them rather
+      # than launching puppeteer with --no-sandbox.
+      - name: Allow Chrome sandbox
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
       - name: Run dev server in background
         working-directory: examples/playground
         run: |
